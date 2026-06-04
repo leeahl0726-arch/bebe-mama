@@ -244,13 +244,13 @@
   <div class="error-msg" id="err-q9">필수 문항입니다.</div>
   <!-- Q9-2 타사 구매 이유 -->
   <div class="sub-q" id="sub-q9-2">
-    <div class="sub-q-text">베베랑마마랑이 아닌 해당 제품을 선택한 이유는 무엇인가요? (단일 선택)</div>
+    <div class="sub-q-text">베베랑마마랑이 아닌 해당 제품을 선택한 이유는 무엇인가요? (복수 선택)</div>
     <div class="option-list">
-      <label class="option-item"><input type="radio" name="q9_2" value="제품의 구성과 퀄리티가 더 좋아서"><span class="option-label">제품의 구성과 퀄리티가 더 좋아서</span></label>
-      <label class="option-item"><input type="radio" name="q9_2" value="아이가 더 좋아해서"><span class="option-label">아이가 더 좋아해서</span></label>
-      <label class="option-item"><input type="radio" name="q9_2" value="가격이 더 합리적이어서"><span class="option-label">가격이 더 합리적이어서</span></label>
-      <label class="option-item"><input type="radio" name="q9_2" value="후기와 추천이 더 많아서"><span class="option-label">후기와 추천이 더 많아서</span></label>
-      <label class="option-item"><input type="radio" name="q9_2" value="브랜드가 더 마음에 들어서"><span class="option-label">브랜드가 더 마음에 들어서</span></label>
+      <label class="option-item"><input type="checkbox" name="q9_2" value="제품의 구성과 퀄리티가 더 좋아서"><span class="option-label">제품의 구성과 퀄리티가 더 좋아서</span></label>
+      <label class="option-item"><input type="checkbox" name="q9_2" value="아이가 더 좋아해서"><span class="option-label">아이가 더 좋아해서</span></label>
+      <label class="option-item"><input type="checkbox" name="q9_2" value="가격이 더 합리적이어서"><span class="option-label">가격이 더 합리적이어서</span></label>
+      <label class="option-item"><input type="checkbox" name="q9_2" value="후기와 추천이 더 많아서"><span class="option-label">후기와 추천이 더 많아서</span></label>
+      <label class="option-item"><input type="checkbox" name="q9_2" value="브랜드가 더 마음에 들어서"><span class="option-label">브랜드가 더 마음에 들어서</span></label>
     </div>
   </div>
 </div>
@@ -436,9 +436,7 @@ function collectData() {
   const isAlt = q9 !== '구매한 제품 없음' && q9 !== '';
   let q9_2 = '';
   if (isAlt) {
-    q9_2 = document.querySelector('input[name="q9_2"]:checked')?.value || '';
-    const q9_2etc = document.getElementById('q9-2-etc-input').value.trim();
-    if (q9_2 === '기타' && q9_2etc) q9_2 = `기타: ${q9_2etc}`;
+    q9_2 = Array.from(document.querySelectorAll('input[name="q9_2"]:checked')).map(e => e.value).join(', ');
   } else {
     q9_2 = '해당없음';
   }
@@ -504,5 +502,6 @@ if (data.survey_type === '이탈자') {
 -->
 </body>
 </html>
+
 
 
