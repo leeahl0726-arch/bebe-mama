@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>베베랑마마랑 이탈자 설문</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --warm: #5B9BD5; --warm-lt: #EDF4FB; --dark: #2C3E6B;
+    --gray: #6B7A99; --light: #F4F7FD; --white: #FFFFFF;
+    --border: #D0DFF0; --error: #E53935;
+  }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #F0F6FF; color: var(--dark); min-height: 100vh; padding-bottom: 80px; }
+  .progress-bar { height: 4px; background: var(--border); position: sticky; top: 0; z-index: 100; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #5B9BD5, #F7C5D0); transition: width 0.4s ease; width: 0%; }
+  .intro-box { background: #EDF4FB; border-left: 3px solid #5B9BD5; margin: 20px 16px 0; padding: 14px 16px; border-radius: 0 6px 6px 0; font-size: 13px; color: var(--gray); line-height: 1.9; }
+  .intro-box strong { color: var(--dark); }
+  .question-card { background: var(--white); margin: 10px 16px 0; border-radius: 14px; padding: 20px 16px; border: 1px solid var(--border); transition: box-shadow 0.2s; box-shadow: 0 2px 8px rgba(91,155,213,0.08); }
+  .question-card:focus-within { box-shadow: 0 4px 16px rgba(91,155,213,0.15); border-color: #5B9BD5; }
+  .question-card.error { border-color: var(--error); }
+  .q-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #5B9BD5; margin-bottom: 6px; background: #EDF4FB; display:inline-block; padding:2px 10px; border-radius:20px; }
+  .q-text { font-size: 14px; font-weight: 500; color: var(--dark); line-height: 1.6; margin-bottom: 14px; }
+  .q-required { color: #E8547A; }
+  .q-hint { font-size: 11.5px; color: var(--gray); margin-bottom: 12px; margin-top: -8px; }
+  .option-list { display: flex; flex-direction: column; gap: 7px; }
+  .option-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 13px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.15s; background: var(--white); }
+  .option-item:hover { border-color: #5B9BD5; background: #EDF4FB; }
+  .option-item.selected { border-color: #5B9BD5; background: #EDF4FB; }
+  .option-item input { margin-top: 2px; accent-color: #5B9BD5; width: 15px; height: 15px; flex-shrink: 0; }
+  .option-label { font-size: 13.5px; line-height: 1.5; color: var(--dark); }
+  .etc-input { width: 100%; margin-top: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif; color: var(--dark); display: none; background: var(--light); }
+  .etc-input:focus { outline: none; border-color: var(--warm); }
+  .etc-input.show { display: block; }
+  .sub-q { margin-top: 14px; padding: 14px; background: var(--light); border-radius: 8px; border: 1px dashed var(--border); display: none; }
+  .sub-q.show { display: block; }
+  .sub-q-text { font-size: 13px; font-weight: 500; color: var(--gray); margin-bottom: 10px; line-height: 1.5; }
+  textarea { width: 100%; padding: 10px 13px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif; color: var(--dark); resize: vertical; min-height: 72px; background: var(--white); }
+  textarea:focus { outline: none; border-color: var(--warm); }
+  .scale-wrap { display: flex; flex-direction: row; gap: 4px; justify-content: space-between; margin-bottom: 8px; }
+  .scale-btn { flex: 1; padding: 10px 0; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--gray); cursor: pointer; text-align: center; background: var(--white); transition: all 0.15s; }
+  .scale-btn:hover { border-color: #5B9BD5; background: #EDF4FB; color: #5B9BD5; }
+  .scale-btn.selected { border-color: #5B9BD5; background: #5B9BD5; color: var(--white); }
+  .error-msg { font-size: 12px; color: var(--error); margin-top: 8px; display: none; }
+  .error-msg.show { display: block; }
+  .submit-area { margin: 24px 16px 0; }
+  .submit-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #5B9BD5, #7BB8E8); color: var(--white); border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: background 0.2s; }
+  .submit-btn:hover { background: linear-gradient(135deg, #4A8AC4, #6AA7D7); }
+  .submit-btn:disabled { background: var(--border); cursor: not-allowed; }
+  .submit-note { text-align: center; margin-top: 10px; font-size: 12px; color: var(--gray); }
+  .complete-screen { display: none; text-align: center; padding: 80px 24px; }
+  .complete-screen.show { display: block; }
+  .complete-icon { font-size: 56px; margin-bottom: 20px; }
+  .complete-title { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+  .complete-sub { font-size: 14px; color: var(--gray); line-height: 1.9; }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(46,32,24,0.6); display: none; align-items: center; justify-content: center; z-index: 999; }
+  .loading-overlay.show { display: flex; }
+  .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--warm); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div></div>
+
+<div style="background:linear-gradient(135deg,#5B9BD5 0%,#7BB8E8 50%,#A8D4F5 100%); padding:28px 20px 24px; text-align:center;">
+  <div style="font-size:11px; letter-spacing:3px; color:#FFE0A0; margin-bottom:10px;">GREATBOOKS</div>
+  <div style="font-size:20px; font-weight:700; color:#ffffff; margin-bottom:6px;">베베랑마마랑</div>
+  <div style="font-size:13px; color:rgba(255,255,255,0.6);">체험북 수령자 설문조사</div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div id="survey-form">
+
+<div class="intro-box">
+  안녕하세요! 그레이트북스 베베랑마마랑 마케팅팀입니다.<br>
+  체험북을 받아보신 분들을 위한 짧은 설문이에요.<br>
+  <strong>응답 시간은 약 3~5분</strong>이며, 응답 내용은 통계 목적으로만 활용됩니다. 감사합니다 😊
+</div>
+
+<!-- Q1 스크리닝 -->
+<div class="question-card" id="card-q1">
+  <div class="q-num">Q 1</div>
+  <div class="q-text">현재 자녀의 개월 수를 알려주세요. <span class="q-required">*</span></div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q1" value="임신중"><span class="option-label">임신중</span></label>
+    <label class="option-item"><input type="radio" name="q1" value="생후 0~6개월"><span class="option-label">생후 0~6개월</span></label>
+    <label class="option-item"><input type="radio" name="q1" value="생후 7~12개월"><span class="option-label">생후 7~12개월</span></label>
+    <label class="option-item"><input type="radio" name="q1" value="생후 13~24개월"><span class="option-label">생후 13~24개월</span></label>
+    <label class="option-item"><input type="radio" name="q1" value="25개월 이상"><span class="option-label">25개월 이상</span></label>
+  </div>
+  <div class="error-msg" id="err-q1">필수 문항입니다.</div>
+</div>
+
+<!-- Q2 정보탐색경로 -->
+<div class="question-card" id="card-q2">
+  <div class="q-num">Q 2</div>
+  <div class="q-text">베베랑마마랑을 처음 알게 된 경로는 어디인가요? <span class="q-required">*</span></div>
+  <div class="q-hint">복수 선택 가능</div>
+  <div class="option-list">
+    <label class="option-item"><input type="checkbox" name="q2" value="네이버 블로그 후기"><span class="option-label">네이버 블로그 후기</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="유튜브"><span class="option-label">유튜브</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="맘카페"><span class="option-label">맘카페</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="지인 추천"><span class="option-label">지인 추천</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="오프라인 서점"><span class="option-label">오프라인 서점</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="임신 축하 박스 / 출산 선물 박스"><span class="option-label">임신 축하 박스 / 출산 선물 박스</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="그레이트북스 공식 인스타그램"><span class="option-label">그레이트북스 공식 인스타그램</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="온라인 광고"><span class="option-label">온라인 광고</span></label>
+    <label class="option-item"><input type="checkbox" name="q2" value="기타" id="q2-etc-chk"><span class="option-label">기타</span></label>
+    <input type="text" class="etc-input" id="q2-etc-input" placeholder="직접 입력해주세요">
+  </div>
+  <div class="error-msg" id="err-q2">하나 이상 선택해주세요.</div>
+</div>
+
+<!-- Q3 후킹메시지 -->
+<div class="question-card" id="card-q3">
+  <div class="q-num">Q 3</div>
+  <div class="q-text">아래는 베베랑마마랑을 소개하는 문구입니다. 가장 마음에 와닿는 것을 골라주세요. <span class="q-required">*</span></div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q3" value="태어나자마자 엄마아빠와 보는 첫 그림책"><span class="option-label">태어나자마자 엄마아빠와 보는 첫 그림책</span></label>
+    <label class="option-item"><input type="radio" name="q3" value="뭘 해줘야 모를 때 고민할 필요가 없어요"><span class="option-label">뭘 해줘야 모를 때 고민할 필요가 없어요</span></label>
+    <label class="option-item"><input type="radio" name="q3" value="우리 아이 발달을 위한 모든 자극을 한 번에!"><span class="option-label">우리 아이 발달을 위한 모든 자극을 한 번에!</span></label>
+    <label class="option-item"><input type="radio" name="q3" value="아이가 좋아하는 걸 보니까 아깝다는 생각이 사라졌어요!"><span class="option-label">아이가 좋아하는 걸 보니까 아깝다는 생각이 사라졌어요!</span></label>
+    <label class="option-item"><input type="radio" name="q3" value="하루 10분, 엄마아빠와 아이가 연결되는 순간"><span class="option-label">하루 10분, 엄마아빠와 아이가 연결되는 순간</span></label>
+    <label class="option-item"><input type="radio" name="q3" value="딱히 와 닿는 것이 없다"><span class="option-label">딱히 와 닿는 것이 없다</span></label>
+  </div>
+  <div class="error-msg" id="err-q3">필수 문항입니다.</div>
+  <div class="sub-q" id="sub-q3">
+    <div class="sub-q-text">선택한 문구가 마음에 와닿은 이유를 간단히 적어주세요. (선택)</div>
+    <textarea name="q3_1" placeholder="자유롭게 입력해주세요"></textarea>
+  </div>
+</div>
+
+<!-- Q4 메시지인지 -->
+<div class="question-card" id="card-q4">
+  <div class="q-num">Q 4</div>
+  <div class="q-text">베베랑마마랑의 브랜드 메시지나 광고 문구를 본 기억이 있으신가요? <span class="q-required">*</span></div>
+  <div style="margin-bottom:14px;">
+    <div style="background:#EDF4FB; border:1px solid #B8D4EF; border-radius:10px; padding:12px 14px; margin-bottom:8px;">
+      <div style="font-size:10.5px; font-weight:700; color:#5B9BD5; margin-bottom:4px;">📢 메시지 1</div>
+      <div style="font-size:13px; color:#2C3E6B; line-height:1.6;">초보 부모를 도와주는 육아 내비게이션, <strong>베베랑마마랑</strong></div>
+    </div>
+    <div style="background:#FEF0F4; border:1px solid #F7C5D0; border-radius:10px; padding:12px 14px;">
+      <div style="font-size:10.5px; font-weight:700; color:#E8547A; margin-bottom:4px;">📢 메시지 2</div>
+      <div style="font-size:13px; color:#2C3E6B; line-height:1.6;">우리 아이 두뇌 발달 골든 타임을 위한 통합발달 프로그램, <strong>베베랑마마랑</strong></div>
+    </div>
+  </div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q4" value="네, 본 적 있다"><span class="option-label">네, 본 적 있다</span></label>
+    <label class="option-item"><input type="radio" name="q4" value="아니오, 본 적 없다"><span class="option-label">아니오, 본 적 없다</span></label>
+  </div>
+  <div class="error-msg" id="err-q4">필수 문항입니다.</div>
+</div>
+
+<!-- Q5 카테고리필요도 -->
+<div class="question-card" id="card-q5">
+  <div class="q-num">Q 5</div>
+  <div class="q-text">구매와 상관없이 전집이 필요하다고 느끼는 시기는 언제쯤인가요? <span class="q-required">*</span></div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q5" value="태어나자마자"><span class="option-label">태어나자마자</span></label>
+    <label class="option-item"><input type="radio" name="q5" value="3개월 무렵"><span class="option-label">3개월 무렵</span></label>
+    <label class="option-item"><input type="radio" name="q5" value="6개월 무렵"><span class="option-label">6개월 무렵</span></label>
+    <label class="option-item"><input type="radio" name="q5" value="12개월 무렵"><span class="option-label">12개월 무렵</span></label>
+    <label class="option-item"><input type="radio" name="q5" value="12개월 이후"><span class="option-label">12개월 이후</span></label>
+    <label class="option-item"><input type="radio" name="q5" value="개월 수에 상관 없이 언제든 필요하다"><span class="option-label">개월 수에 상관 없이 언제든 필요하다</span></label>
+    <label class="option-item"><input type="radio" name="q5" value="전집은 크게 필요하지 않다고 생각한다"><span class="option-label">전집은 크게 필요하지 않다고 생각한다</span></label>
+  </div>
+  <div class="error-msg" id="err-q5">필수 문항입니다.</div>
+  <div class="sub-q" id="sub-q5">
+    <div class="sub-q-text">그렇게 느낀 이유를 간단히 적어주세요. (선택)</div>
+    <textarea name="q5_1" placeholder="자유롭게 입력해주세요"></textarea>
+  </div>
+</div>
+
+<!-- Q6 비구매 결정 트리거 -->
+<div class="question-card" id="card-q6">
+  <div class="q-num">Q 6</div>
+  <div class="q-text">베베랑마마랑을 구매하지 않은 가장 큰 이유는 무엇인가요? <span class="q-required">*</span></div>
+  <div class="q-hint">단일 선택</div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q6" value="아이 개월수에 맞지 않아서"><span class="option-label">아이 개월수에 맞지 않아서</span></label>
+    <label class="option-item"><input type="radio" name="q6" value="제품이 마음에 들지 않아서"><span class="option-label">제품이 마음에 들지 않아서</span></label>
+    <label class="option-item"><input type="radio" name="q6" value="제품에 대한 신뢰가 부족해서"><span class="option-label">제품에 대한 신뢰가 부족해서</span></label>
+    <label class="option-item"><input type="radio" name="q6" value="아이가 좋아하지 않을 것 같아서"><span class="option-label">아이가 좋아하지 않을 것 같아서</span></label>
+    <label class="option-item"><input type="radio" name="q6" value="이미 다른 전집을 가지고 있어서"><span class="option-label">이미 다른 전집을 가지고 있어서</span></label>
+    <label class="option-item"><input type="radio" name="q6" value="구매 가격이 부담스러워서"><span class="option-label">구매 가격이 부담스러워서</span></label>
+    <label class="option-item"><input type="radio" name="q6" value="전집이 필요하지 않다고 생각해서"><span class="option-label">전집이 필요하지 않다고 생각해서</span></label>
+    <label class="option-item"><input type="radio" name="q6" value="기타" id="q6-etc-chk"><span class="option-label">기타</span></label>
+    <input type="text" class="etc-input" id="q6-etc-input" placeholder="직접 입력해주세요">
+  </div>
+  <div class="error-msg" id="err-q6">필수 문항입니다.</div>
+</div>
+
+<!-- Q7 가격 저항 -->
+<div class="question-card" id="card-q7">
+  <div class="q-num">Q 7</div>
+  <div class="q-text">가격이 구매 결정에 얼마나 영향을 미쳤나요? <span class="q-required">*</span></div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q7" value="1"><span class="option-label">전혀 영향 없음</span></label>
+    <label class="option-item"><input type="radio" name="q7" value="2"><span class="option-label">거의 없음</span></label>
+    <label class="option-item"><input type="radio" name="q7" value="3"><span class="option-label">보통</span></label>
+    <label class="option-item"><input type="radio" name="q7" value="4"><span class="option-label">다소 영향 있음</span></label>
+    <label class="option-item"><input type="radio" name="q7" value="5"><span class="option-label">매우 큰 영향 있음</span></label>
+  </div>
+  <div class="error-msg" id="err-q7">필수 문항입니다.</div>
+  <div class="sub-q show" style="margin-top:14px;">
+    <div class="sub-q-text">해당 점수를 선택한 이유를 간단히 적어주세요. (선택)</div>
+    <textarea name="q7_1" placeholder="자유롭게 입력해주세요"></textarea>
+  </div>
+</div>
+
+<!-- Q8 경쟁 대안 -->
+<div class="question-card" id="card-q8">
+  <div class="q-num">Q 8</div>
+  <div class="q-text">구매 고민 시 함께 비교했던 제품이 있다면 모두 선택해주세요. <span class="q-required">*</span></div>
+  <div class="q-hint">복수 선택 가능</div>
+  <div class="option-list">
+    <label class="option-item"><input type="checkbox" name="q8" value="프뢰벨 영아다중"><span class="option-label">프뢰벨 영아다중</span></label>
+    <label class="option-item"><input type="checkbox" name="q8" value="아람북스 베이비올아기"><span class="option-label">아람북스 베이비올아기</span></label>
+    <label class="option-item"><input type="checkbox" name="q8" value="한솔 핀덴베베"><span class="option-label">한솔 핀덴베베</span></label>
+    <label class="option-item"><input type="checkbox" name="q8" value="비교한 제품 없음"><span class="option-label">비교한 제품 없음</span></label>
+    <label class="option-item"><input type="checkbox" name="q8" value="기타" id="q8-etc-chk"><span class="option-label">기타</span></label>
+    <input type="text" class="etc-input" id="q8-etc-input" placeholder="직접 입력해주세요">
+  </div>
+  <div class="error-msg" id="err-q8">하나 이상 선택해주세요.</div>
+</div>
+
+<!-- Q9 대안 구매 여부 -->
+<div class="question-card" id="card-q9">
+  <div class="q-num">Q 9</div>
+  <div class="q-text">베베랑마마랑 대신 실제로 구매한 다른 제품이 있나요? <span class="q-required">*</span></div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q9" value="프뢰벨 영아다중"><span class="option-label">프뢰벨 영아다중</span></label>
+    <label class="option-item"><input type="radio" name="q9" value="아람북스 베이비올아기"><span class="option-label">아람북스 베이비올아기</span></label>
+    <label class="option-item"><input type="radio" name="q9" value="한솔 핀덴베베"><span class="option-label">한솔 핀덴베베</span></label>
+    <label class="option-item"><input type="radio" name="q9" value="구매한 제품 없음"><span class="option-label">구매한 제품 없음</span></label>
+    <label class="option-item"><input type="radio" name="q9" value="기타" id="q9-etc-chk"><span class="option-label">기타</span></label>
+    <input type="text" class="etc-input" id="q9-etc-input" placeholder="직접 입력해주세요">
+  </div>
+  <div class="error-msg" id="err-q9">필수 문항입니다.</div>
+  <!-- Q9-2 타사 구매 이유 -->
+  <div class="sub-q" id="sub-q9-2">
+    <div class="sub-q-text">베베랑마마랑이 아닌 해당 제품을 선택한 이유는 무엇인가요? (단일 선택)</div>
+    <div class="option-list">
+      <label class="option-item"><input type="radio" name="q9_2" value="제품의 구성과 퀄리티가 더 좋아서"><span class="option-label">제품의 구성과 퀄리티가 더 좋아서</span></label>
+      <label class="option-item"><input type="radio" name="q9_2" value="아이가 더 좋아해서"><span class="option-label">아이가 더 좋아해서</span></label>
+      <label class="option-item"><input type="radio" name="q9_2" value="가격이 더 합리적이어서"><span class="option-label">가격이 더 합리적이어서</span></label>
+      <label class="option-item"><input type="radio" name="q9_2" value="후기와 추천이 더 많아서"><span class="option-label">후기와 추천이 더 많아서</span></label>
+      <label class="option-item"><input type="radio" name="q9_2" value="브랜드가 더 마음에 들어서"><span class="option-label">브랜드가 더 마음에 들어서</span></label>
+    </div>
+  </div>
+</div>
+
+<!-- Q10 추천의향 -->
+<div class="question-card" id="card-q10">
+  <div class="q-num">Q 10</div>
+  <div class="q-text">체험북을 받아본 후, 주변에 베베랑마마랑을 추천할 의향이 있으신가요? <span class="q-required">*</span> <span style="font-size:12px;color:var(--gray);font-weight:400;">(1~10점 척도)</span></div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+    <span style="font-size:13px;font-weight:500;color:var(--gray);">👎 매우 비추천</span>
+    <span style="font-size:13px;font-weight:500;color:var(--gray);">👍 매우 추천</span>
+  </div>
+  <div class="scale-wrap" id="scale-q10" style="flex-direction:row !important;">
+    <div class="scale-btn" data-val="1" onclick="selectScale('q10',1)">1</div>
+    <div class="scale-btn" data-val="2" onclick="selectScale('q10',2)">2</div>
+    <div class="scale-btn" data-val="3" onclick="selectScale('q10',3)">3</div>
+    <div class="scale-btn" data-val="4" onclick="selectScale('q10',4)">4</div>
+    <div class="scale-btn" data-val="5" onclick="selectScale('q10',5)">5</div>
+    <div class="scale-btn" data-val="6" onclick="selectScale('q10',6)">6</div>
+    <div class="scale-btn" data-val="7" onclick="selectScale('q10',7)">7</div>
+    <div class="scale-btn" data-val="8" onclick="selectScale('q10',8)">8</div>
+    <div class="scale-btn" data-val="9" onclick="selectScale('q10',9)">9</div>
+    <div class="scale-btn" data-val="10" onclick="selectScale('q10',10)">10</div>
+  </div>
+  <input type="hidden" name="q10_nps" id="q10-val">
+  <div class="error-msg" id="err-q10">필수 문항입니다.</div>
+</div>
+
+<!-- Q11 구매 타이밍 -->
+<div class="question-card" id="card-q11">
+  <div class="q-num">Q 11</div>
+  <div class="q-text">베베랑마마랑 체험북을 받을 당시 아기는 몇 개월이었나요? <span class="q-required">*</span></div>
+  <div class="option-list">
+    <label class="option-item"><input type="radio" name="q10" value="임신 중"><span class="option-label">임신 중</span></label>
+    <label class="option-item"><input type="radio" name="q10" value="생후 0~3개월"><span class="option-label">생후 0~3개월</span></label>
+    <label class="option-item"><input type="radio" name="q10" value="생후 4~6개월"><span class="option-label">생후 4~6개월</span></label>
+    <label class="option-item"><input type="radio" name="q10" value="생후 7~9개월"><span class="option-label">생후 7~9개월</span></label>
+    <label class="option-item"><input type="radio" name="q10" value="생후 10~12개월"><span class="option-label">생후 10~12개월</span></label>
+    <label class="option-item"><input type="radio" name="q10" value="생후 13개월 이상"><span class="option-label">생후 13개월 이상</span></label>
+  </div>
+  <div class="error-msg" id="err-q10">필수 문항입니다.</div>
+</div>
+
+<!-- Q12 자유의견 -->
+<div class="question-card" id="card-q12">
+  <div class="q-num">Q 12</div>
+  <div class="q-text">마지막으로 베베랑마마랑에 대해 남기고 싶은 의견이 있다면 자유롭게 적어주세요. <span class="q-required">*</span></div>
+  <textarea name="q11" id="q12-ta" placeholder="자유롭게 입력해주세요" style="min-height:90px;"></textarea>
+  <div class="error-msg" id="err-q12">필수 문항입니다.</div>
+</div>
+
+<div class="submit-area">
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">설문 제출하기</button>
+  <p class="submit-note">* 표시는 필수 문항입니다</p>
+</div>
+
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="complete-icon">🎉</div>
+  <div class="complete-title">응답이 완료되었습니다!</div>
+  <div class="complete-sub">소중한 의견 감사합니다.<br>기프티콘은 발송 안내 문자로 전달드릴 예정입니다.</div>
+</div>
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwlrZeE8BgJo7xWgswBVisvdabhqfMQFQN2FxoVveenNtE7xDmQxqvAs1Ad44MtAC9H/exec";
+
+const scaleVals = {};
+function selectScale(name, val) {
+  scaleVals[name] = val;
+  document.getElementById(`${name}-val`).value = val;
+  document.querySelectorAll(`#scale-${name} .scale-btn`).forEach(btn => {
+    btn.classList.toggle('selected', parseInt(btn.dataset.val) === val);
+  });
+  updateProgress();
+  document.getElementById(`err-${name}`)?.classList.remove('show');
+  document.getElementById(`card-${name}`)?.classList.remove('error');
+}
+const REQUIRED = ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12'];
+
+function updateProgress() {
+  let done = 0;
+  REQUIRED.forEach(q => {
+    if (['q2','q8'].includes(q)) { if (document.querySelectorAll(`input[name="${q}"]:checked`).length > 0) done++; }
+    else if (q === 'q10') { if (scaleVals['q10']) done++; }
+    else if (q === 'q12') { if (document.getElementById('q12-ta')?.value.trim()) done++; }
+    else { if (document.querySelector(`input[name="${q}"]:checked`)) done++; }
+  });
+  document.getElementById('progressFill').style.width = (done / REQUIRED.length * 100) + '%';
+}
+
+document.querySelectorAll('.option-item input').forEach(input => {
+  input.addEventListener('change', function() {
+    const name = this.name;
+    if (this.type === 'radio') {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.closest('.option-item').classList.remove('selected'));
+      this.closest('.option-item').classList.add('selected');
+    } else {
+      this.closest('.option-item').classList.toggle('selected', this.checked);
+    }
+    updateProgress();
+    document.getElementById(`err-${name}`)?.classList.remove('show');
+    document.getElementById(`card-${name}`)?.classList.remove('error');
+
+    // 기타 입력창
+    if (this.id === 'q2-etc-chk') document.getElementById('q2-etc-input').classList.toggle('show', this.checked);
+    if (this.id === 'q6-etc-chk') document.getElementById('q6-etc-input').classList.toggle('show', this.checked);
+    if (this.id === 'q8-etc-chk') document.getElementById('q8-etc-input').classList.toggle('show', this.checked);
+    if (this.id === 'q9-etc-chk') document.getElementById('q9-etc-input').classList.toggle('show', this.checked);
+
+    // Q3 서브문항
+    if (name === 'q3') document.getElementById('sub-q3').classList.toggle('show', this.value !== '딱히 와 닿는 것이 없다');
+
+    // Q5 서브문항
+    if (name === 'q5') document.getElementById('sub-q5').classList.add('show');
+
+    // Q6 기타 라디오
+    if (name === 'q6') {
+      document.getElementById('q6-etc-input').classList.toggle('show', this.value === '기타');
+      if (this.value !== '기타') document.getElementById('q6-etc-input').value = '';
+    }
+
+    // Q9 서브문항 (구매한 제품 없음 제외)
+    if (name === 'q9') {
+      const show = this.value !== '구매한 제품 없음';
+      document.getElementById('sub-q9-2').classList.toggle('show', show);
+      if (!show) {
+        document.querySelectorAll('input[name="q9_2"]').forEach(r => { r.checked = false; r.closest('.option-item').classList.remove('selected'); });
+      }
+      document.getElementById('q9-etc-input').classList.toggle('show', this.value === '기타');
+      if (this.value !== '기타') document.getElementById('q9-etc-input').value = '';
+    }
+  });
+});
+
+function validate() {
+  let valid = true;
+  const checks = [
+    { q: 'q1', type: 'radio' }, { q: 'q2', type: 'checkbox' },
+    { q: 'q3', type: 'radio' }, { q: 'q4', type: 'radio' },
+    { q: 'q5', type: 'radio' }, { q: 'q6', type: 'radio' },
+    { q: 'q7', type: 'radio' }, { q: 'q8', type: 'checkbox' },
+    { q: 'q9', type: 'radio' }, { q: 'q10', type: 'scale' },
+    { q: 'q11', type: 'radio' }, { q: 'q12', type: 'textarea' },
+  ];
+  checks.forEach(({ q, type }) => {
+    let ok = false;
+    if (type === 'radio') ok = !!document.querySelector(`input[name="${q}"]:checked`);
+    else if (type === 'checkbox') ok = document.querySelectorAll(`input[name="${q}"]:checked`).length > 0;
+    else if (type === 'scale') ok = !!scaleVals[q];
+    else if (type === 'textarea') ok = !!(document.getElementById('q12-ta')?.value.trim());
+    if (!ok) {
+      document.getElementById(`err-${q}`)?.classList.add('show');
+      document.getElementById(`card-${q}`)?.classList.add('error');
+      valid = false;
+    }
+  });
+  if (!valid) document.querySelector('.error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  return valid;
+}
+
+function getChecked(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(e => e.value).join(', ');
+}
+
+function collectData() {
+  let q2 = getChecked('q2');
+  const q2etc = document.getElementById('q2-etc-input').value.trim();
+  if (q2etc) q2 = q2.replace('기타', `기타: ${q2etc}`);
+
+  let q6 = document.querySelector('input[name="q6"]:checked')?.value || '';
+  const q6etc = document.getElementById('q6-etc-input').value.trim();
+  if (q6 === '기타' && q6etc) q6 = `기타: ${q6etc}`;
+
+  let q8 = getChecked('q8');
+  const q8etc = document.getElementById('q8-etc-input').value.trim();
+  if (q8etc) q8 = q8.replace('기타', `기타: ${q8etc}`);
+
+  let q9 = document.querySelector('input[name="q9"]:checked')?.value || '';
+  const q9etc = document.getElementById('q9-etc-input').value.trim();
+  if (q9 === '기타' && q9etc) q9 = `기타: ${q9etc}`;
+
+  const isAlt = q9 !== '구매한 제품 없음' && q9 !== '';
+  let q9_2 = '';
+  if (isAlt) {
+    q9_2 = document.querySelector('input[name="q9_2"]:checked')?.value || '';
+    const q9_2etc = document.getElementById('q9-2-etc-input').value.trim();
+    if (q9_2 === '기타' && q9_2etc) q9_2 = `기타: ${q9_2etc}`;
+  } else {
+    q9_2 = '해당없음';
+  }
+
+  return {
+    timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+    survey_type: '이탈자',
+    q1_자녀개월수: document.querySelector('input[name="q1"]:checked')?.value || '',
+    q2_정보탐색경로: q2,
+    q3_후킹메시지: document.querySelector('input[name="q3"]:checked')?.value || '',
+    q3_1_이유: document.querySelector('textarea[name="q3_1"]')?.value.trim() || '',
+    q4_메시지인지: document.querySelector('input[name="q4"]:checked')?.value || '',
+    q5_카테고리필요도: document.querySelector('input[name="q5"]:checked')?.value || '',
+    q5_1_이유: document.querySelector('textarea[name="q5_1"]')?.value.trim() || '',
+    q6_비구매트리거: q6,
+    q7_가격저항: document.querySelector('input[name="q7"]:checked')?.value || '',
+    q8_경쟁대안: q8,
+    q9_대안구매: q9,
+    q9_2_타사구매이유: q9_2,
+    q10_추천의향: scaleVals['q10'] || '',
+    q11_구매타이밍: document.querySelector('input[name="q11"]:checked')?.value || '',
+    q12_자유의견: document.getElementById('q12-ta')?.value.trim() || '',
+    q7_1_가격이유: document.querySelector('textarea[name="q7_1"]')?.value.trim() || '',
+  };
+}
+
+async function submitForm() {
+  if (!validate()) return;
+  const data = collectData();
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('loading').classList.add('show');
+  try {
+    await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('survey-form').style.display = 'none';
+    document.getElementById('completeScreen').classList.add('show');
+    window.scrollTo(0, 0);
+  } catch(e) {
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('submitBtn').disabled = false;
+    alert('제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
+}
+</script>
+
+<!--
+구글 시트 이탈자 탭 헤더 (1행 A열부터):
+timestamp | survey_type | q1_자녀개월수 | q2_정보탐색경로 | q3_후킹메시지 | q3_1_이유 | q4_메시지인지 | q5_카테고리필요도 | q5_1_이유 | q6_비구매트리거 | q7_가격저항 | q8_경쟁대안 | q9_대안구매 | q9_2_타사구매이유 | q10_구매타이밍 | q11_자유의견
+
+Apps Script doPost에 추가할 이탈자 처리:
+if (data.survey_type === '이탈자') {
+  const sheet2 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('이탈자');
+  sheet2.appendRow([
+    data.timestamp, data.survey_type,
+    data.q1_자녀개월수, data.q2_정보탐색경로,
+    data.q3_후킹메시지, data.q3_1_이유,
+    data.q4_메시지인지, data.q5_카테고리필요도, data.q5_1_이유,
+    data.q6_비구매트리거, data.q7_가격저항, data.q8_경쟁대안,
+    data.q9_대안구매, data.q9_2_타사구매이유, data.q10_구매타이밍,
+    data.q11_자유의견,
+  ]);
+}
+-->
+</body>
+</html>
