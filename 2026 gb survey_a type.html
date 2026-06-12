@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>베베랑마마랑 고객 설문조사 (구매자)</title>
+<style>
+  :root {
+    --primary: #5BA4CF;
+    --primary-light: #A8D4F0;
+    --primary-pale: #EAF5FC;
+    --accent: #F9A8C9;
+    --accent-pale: #FEF0F6;
+    --bg: #F4F9FD;
+    --card: #FFFFFF;
+    --text: #333333;
+    --gray: #888888;
+    --border: #D6EAF8;
+    --error: #E74C3C;
+    --success: #27AE60;
+    --radius: 16px;
+    --shadow: 0 2px 12px rgba(91,164,207,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+  .header {
+    background: linear-gradient(135deg, #5BA4CF 0%, #85C1E9 60%, #F9A8C9 100%);
+    color: #fff;
+    padding: 36px 24px 28px;
+    text-align: center;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .header-sub {
+    font-size: 13px;
+    opacity: 0.88;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .header-info {
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 12px;
+    line-height: 1.7;
+    text-align: left;
+  }
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(91,164,207,0.08);
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .form-body { padding: 20px 16px; max-width: 640px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 28px 0 8px;
+    padding-left: 4px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .card.error { border-color: var(--error) !important; }
+  .card.hidden { display: none; }
+  .q-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .q-label .req { color: var(--primary); margin-left: 3px; }
+  .q-label .multi-badge {
+    display: inline-block;
+    background: var(--primary-pale);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 1px 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary-pale);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--text);
+    transition: all 0.15s;
+    text-align: left;
+    width: 100%;
+  }
+  .opt-btn:hover { border-color: var(--primary-light); background: #daeef9; }
+  .opt-btn.selected {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .opt-btn .dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-light);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .opt-btn.selected .dot {
+    background: #fff;
+    border-color: #fff;
+  }
+  .opt-btn.selected .dot::after {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+  .opt-btn .sq {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 2px solid var(--primary-light);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .opt-btn.selected .sq {
+    background: #fff;
+    border-color: #fff;
+  }
+  .opt-btn.selected .sq::after {
+    content: '✓';
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 900;
+  }
+  .other-input {
+    margin-top: 8px;
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--primary-pale);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    display: none;
+  }
+  .other-input:focus { border-color: var(--primary); }
+  .scale-wrap { display: flex; flex-direction: column; gap: 10px; }
+  .scale-row { display: flex; gap: 6px; justify-content: space-between; }
+  .scale-btn {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--primary-pale);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .scale-btn:hover { border-color: var(--primary-light); }
+  .scale-btn.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--gray);
+    padding: 0 2px;
+  }
+  textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--primary-pale);
+    color: var(--text);
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--primary); }
+  .err-msg {
+    font-size: 11.5px;
+    color: var(--error);
+    margin-top: 6px;
+    display: none;
+  }
+  .err-msg.show { display: block; }
+  .submit-area { text-align: center; margin-top: 28px; }
+  .submit-btn {
+    background: linear-gradient(135deg, var(--primary), #85C1E9);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 48px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(91,164,207,0.3);
+    transition: all 0.2s;
+    width: 100%;
+    max-width: 360px;
+  }
+  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(91,164,207,0.4); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .complete-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 24px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .complete-icon { font-size: 56px; margin-bottom: 20px; }
+  .complete-title { font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 12px; }
+  .complete-sub { font-size: 14px; color: var(--gray); line-height: 1.7; }
+  input[type="hidden"] { display: none; }
+</style>
+</head>
+<body>
+
+<div id="surveyForm">
+
+<div class="header">
+  <div class="header-badge">🍼 GREATBOOKS RESEARCH 2026</div>
+  <div class="header-title">베베랑마마랑 고객 설문조사</div>
+  <div class="header-sub">구매해주셔서 진심으로 감사드려요 💙<br>소중한 의견이 더 좋은 제품을 만드는 데 큰 도움이 됩니다.</div>
+  <div class="header-info">
+    ⏱ 소요시간 약 5~7분 &nbsp;|&nbsp; 🔒 익명 처리<br>
+    📌 모든 문항은 필수입니다 (마지막 자유의견 제외)
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>응답 진행률</span>
+    <span id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="form-body">
+
+<!-- SECTION 0 -->
+<div class="section-label">SECTION 0. 기본 정보</div>
+
+<div class="card" id="card-q1">
+  <div class="q-label">Q1. 베베랑마마랑을 구매할 당시, 아이는 몇 개월이었나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q1">
+    <button class="opt-btn" onclick="selectSingle('q1',this,'출산전(임신중)')"><span class="dot"></span>출산전(임신중)</button>
+    <button class="opt-btn" onclick="selectSingle('q1',this,'1~3개월')"><span class="dot"></span>1~3개월</button>
+    <button class="opt-btn" onclick="selectSingle('q1',this,'4~6개월')"><span class="dot"></span>4~6개월</button>
+    <button class="opt-btn" onclick="selectSingle('q1',this,'7~9개월')"><span class="dot"></span>7~9개월</button>
+    <button class="opt-btn" onclick="selectSingle('q1',this,'10~12개월')"><span class="dot"></span>10~12개월</button>
+    <button class="opt-btn" onclick="selectSingle('q1',this,'13개월 이상')"><span class="dot"></span>13개월 이상</button>
+  </div>
+  <div class="err-msg" id="err-q1">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q1-val" name="q1">
+</div>
+
+<div class="card" id="card-q2">
+  <div class="q-label">Q2. 현재 아이는 몇 개월인가요?<span class="req">*</span></div>
+  <div class="options" id="opts-q2">
+    <button class="opt-btn" onclick="selectSingle('q2',this,'0~3개월')"><span class="dot"></span>0~3개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'4~6개월')"><span class="dot"></span>4~6개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'7~9개월')"><span class="dot"></span>7~9개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'10~12개월')"><span class="dot"></span>10~12개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'13~15개월')"><span class="dot"></span>13~15개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'16~18개월')"><span class="dot"></span>16~18개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'19~21개월')"><span class="dot"></span>19~21개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'22~24개월')"><span class="dot"></span>22~24개월</button>
+    <button class="opt-btn" onclick="selectSingle('q2',this,'25개월 이상')"><span class="dot"></span>25개월 이상</button>
+  </div>
+  <div class="err-msg" id="err-q2">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q2-val" name="q2">
+</div>
+
+<!-- SECTION 1 -->
+<div class="section-label">SECTION 1. 인지</div>
+
+<div class="card" id="card-q3">
+  <div class="q-label">Q3. 베베랑마마랑을 처음 알게 된 경로는 어디인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q3">
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'네이버 블로그 후기')"><span class="sq"></span>네이버 블로그 후기</button>
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'인스타그램')"><span class="sq"></span>인스타그램</button>
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'오프라인 서점')"><span class="sq"></span>오프라인 서점</button>
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'지인 추천')"><span class="sq"></span>지인 추천</button>
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'맘카페')"><span class="sq"></span>맘카페</button>
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'유튜브')"><span class="sq"></span>유튜브</button>
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'온라인 광고')"><span class="sq"></span>온라인 광고</button>
+    <button class="opt-btn" onclick="toggleMulti('q3',this,'기타',true)"><span class="sq"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q3" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q3">이 항목은 필수입니다.</div>
+</div>
+
+<div class="card" id="card-q4">
+  <div class="q-label">Q4. 전집 구매를 처음 고민하기 시작한 시기는 언제인가요?<span class="req">*</span></div>
+  <div class="options" id="opts-q4">
+    <button class="opt-btn" onclick="selectSingle('q4',this,'임신 중')"><span class="dot"></span>임신 중</button>
+    <button class="opt-btn" onclick="selectSingle('q4',this,'출산 직후 (0~1개월)')"><span class="dot"></span>출산 직후 (0~1개월)</button>
+    <button class="opt-btn" onclick="selectSingle('q4',this,'2~3개월')"><span class="dot"></span>2~3개월</button>
+    <button class="opt-btn" onclick="selectSingle('q4',this,'4~6개월')"><span class="dot"></span>4~6개월</button>
+    <button class="opt-btn" onclick="selectSingle('q4',this,'7~9개월')"><span class="dot"></span>7~9개월</button>
+    <button class="opt-btn" onclick="selectSingle('q4',this,'10개월 이후')"><span class="dot"></span>10개월 이후</button>
+  </div>
+  <div class="err-msg" id="err-q4">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q4-val" name="q4">
+</div>
+
+<div class="card" id="card-q5">
+  <div class="q-label">Q5. 전집에 관심을 가지게 된 계기는 무엇인가요?<span class="req">*</span></div>
+  <div class="options" id="opts-q5">
+    <button class="opt-btn" onclick="selectSingle('q5',this,'주변 지인이 사는 걸 보고 관심이 생겼어요')"><span class="dot"></span>주변 지인이 사는 걸 보고 관심이 생겼어요</button>
+    <button class="opt-btn" onclick="selectSingle('q5',this,'온라인에서 광고와 후기를 보고 관심이 생겼어요')"><span class="dot"></span>온라인에서 광고와 후기를 보고 관심이 생겼어요</button>
+    <button class="opt-btn" onclick="selectSingle('q5',this,'서점에 갔다가 우연히 알게 됐어요')"><span class="dot"></span>서점에 갔다가 우연히 알게 됐어요</button>
+    <button class="opt-btn" onclick="selectSingle('q5',this,'기타',true)"><span class="dot"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q5" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q5">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q5-val" name="q5">
+</div>
+
+<div class="card" id="card-q6">
+  <div class="q-label">Q6. 아이에게 전집을 사주려고 한 이유는 무엇인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q6">
+    <button class="opt-btn" onclick="toggleMulti('q6',this,'아이 발달에 도움이 될 것 같아서')"><span class="sq"></span>아이 발달에 도움이 될 것 같아서</button>
+    <button class="opt-btn" onclick="toggleMulti('q6',this,'뭘 해줘야 할지 몰라서 참고가 될 것 같아서')"><span class="sq"></span>뭘 해줘야 할지 몰라서 참고가 될 것 같아서</button>
+    <button class="opt-btn" onclick="toggleMulti('q6',this,'주변 추천으로 필요성을 느끼게 돼서')"><span class="sq"></span>주변 추천으로 필요성을 느끼게 돼서</button>
+    <button class="opt-btn" onclick="toggleMulti('q6',this,'아이와 함께 교감하는 시간을 만들고 싶어서')"><span class="sq"></span>아이와 함께 교감하는 시간을 만들고 싶어서</button>
+    <button class="opt-btn" onclick="toggleMulti('q6',this,'기타',true)"><span class="sq"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q6" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q6">이 항목은 필수입니다.</div>
+</div>
+
+<div class="card" id="card-q7">
+  <div class="q-label">Q7. 베베랑마마랑을 처음 접했을 때, 가장 마음에 와닿은 것은 무엇인가요?<span class="req">*</span></div>
+  <div class="options" id="opts-q7">
+    <button class="opt-btn" onclick="selectSingle('q7',this,'태어나자마자 보는 생애 첫 그림책이다')"><span class="dot"></span>태어나자마자 보는 생애 첫 그림책이다</button>
+    <button class="opt-btn" onclick="selectSingle('q7',this,'뭘 해 줘야 할지 고민을 해결해준다')"><span class="dot"></span>뭘 해 줘야 할지 고민을 해결해준다</button>
+    <button class="opt-btn" onclick="selectSingle('q7',this,'아이 발달을 위한 모든 자극을 한 번에 담았다')"><span class="dot"></span>아이 발달을 위한 모든 자극을 한 번에 담았다</button>
+    <button class="opt-btn" onclick="selectSingle('q7',this,'아이가 좋아하니까 하루종일 즐겁게 놀 수 있다')"><span class="dot"></span>아이가 좋아하니까 하루종일 즐겁게 놀 수 있다</button>
+    <button class="opt-btn" onclick="selectSingle('q7',this,'딱히 와닿는 것이 없어요')"><span class="dot"></span>딱히 와닿는 것이 없어요</button>
+  </div>
+  <div class="err-msg" id="err-q7">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q7-val" name="q7">
+</div>
+
+<!-- SECTION 2 -->
+<div class="section-label">SECTION 2. 탐색 및 비교</div>
+
+<div class="card" id="card-q8">
+  <div class="q-label">Q8. 베베랑마마랑 구매 전, 다른 제품과 비교해보셨나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q8">
+    <button class="opt-btn" onclick="selectSingle('q8',this,'네, 비교해봤어요'); showQ9(true)"><span class="dot"></span>네, 비교해봤어요</button>
+    <button class="opt-btn" onclick="selectSingle('q8',this,'아니오, 비교하지 않았어요'); showQ9(false)"><span class="dot"></span>아니오, 비교하지 않았어요</button>
+  </div>
+  <div class="err-msg" id="err-q8">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q8-val" name="q8">
+</div>
+
+<div class="card hidden" id="card-q9">
+  <div class="q-label">Q9. 비교한 제품은 무엇인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q9">
+    <button class="opt-btn" onclick="toggleMulti('q9',this,'프뢰벨 - 영아다중')"><span class="sq"></span>프뢰벨 - 영아다중</button>
+    <button class="opt-btn" onclick="toggleMulti('q9',this,'한솔 - 핀덴베베')"><span class="sq"></span>한솔 - 핀덴베베</button>
+    <button class="opt-btn" onclick="toggleMulti('q9',this,'아람 - 베이비올 아기')"><span class="sq"></span>아람 - 베이비올 아기</button>
+    <button class="opt-btn" onclick="toggleMulti('q9',this,'블루래빗')"><span class="sq"></span>블루래빗</button>
+    <button class="opt-btn" onclick="toggleMulti('q9',this,'두두스토리')"><span class="sq"></span>두두스토리</button>
+    <button class="opt-btn" onclick="toggleMulti('q9',this,'기타',true)"><span class="sq"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q9" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q9">이 항목은 필수입니다.</div>
+</div>
+
+<div class="card hidden" id="card-q10">
+  <div class="q-label">Q10. 다른 제품과 비교해 베베랑마마랑이 더 매력적으로 느껴진 부분이 있었나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q10">
+    <button class="opt-btn" onclick="selectSingle('q10',this,'네, 있었어요'); showQ10_1(true)"><span class="dot"></span>네, 있었어요</button>
+    <button class="opt-btn" onclick="selectSingle('q10',this,'아니오, 특별히 더 매력적이진 않았어요'); showQ10_1(false)"><span class="dot"></span>아니오, 특별히 더 매력적이진 않았어요</button>
+  </div>
+  <div class="err-msg" id="err-q10">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q10-val" name="q10">
+</div>
+
+<div class="card hidden" id="card-q10_1">
+  <div class="q-label">Q10-1. 어떤 부분이 더 매력적으로 느껴지셨나요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q10_1">
+    <button class="opt-btn" onclick="toggleMulti('q10_1',this,'그림책의 내용과 디자인이 마음에 들어서')"><span class="sq"></span>그림책의 내용과 디자인이 마음에 들어서</button>
+    <button class="opt-btn" onclick="toggleMulti('q10_1',this,'교구 구성이 다른 제품보다 풍성해 보여서')"><span class="sq"></span>교구 구성이 다른 제품보다 풍성해 보여서</button>
+    <button class="opt-btn" onclick="toggleMulti('q10_1',this,'음원·놀이영상 등 디지털 콘텐츠가 매력적이어서')"><span class="sq"></span>음원·놀이영상 등 디지털 콘텐츠가 매력적이어서</button>
+    <button class="opt-btn" onclick="toggleMulti('q10_1',this,'아이 개월수에 활용하기 적합한 것 같아서')"><span class="sq"></span>아이 개월수에 활용하기 적합한 것 같아서</button>
+    <button class="opt-btn" onclick="toggleMulti('q10_1',this,'가격 대비 구성이 알차 보여서')"><span class="sq"></span>가격 대비 구성이 알차 보여서</button>
+    <button class="opt-btn" onclick="toggleMulti('q10_1',this,'그레이트북스라는 출판사가 믿을 만해서')"><span class="sq"></span>그레이트북스라는 출판사가 믿을 만해서</button>
+    <button class="opt-btn" onclick="toggleMulti('q10_1',this,'후기나 추천이 많아서')"><span class="sq"></span>후기나 추천이 많아서</button>
+  </div>
+  <div class="err-msg" id="err-q10_1">이 항목은 필수입니다.</div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section-label">SECTION 3. 확신</div>
+
+<div class="card" id="card-q11">
+  <div class="q-label">Q11. 서점 방문 전 체험북을 신청하셨나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q11">
+    <button class="opt-btn" onclick="selectSingle('q11',this,'체험북을 사전에 신청하고 방문했어요'); showSec31(true)"><span class="dot"></span>체험북을 사전에 신청하고 방문했어요</button>
+    <button class="opt-btn" onclick="selectSingle('q11',this,'체험북 신청 없이 바로 방문했어요'); showSec31(false)"><span class="dot"></span>체험북 신청 없이 바로 방문했어요</button>
+  </div>
+  <div class="err-msg" id="err-q11">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q11-val" name="q11">
+</div>
+
+<div class="card" id="card-q12">
+  <div class="q-label">Q12. 서점 방문 전 베베랑마마랑을 구매할 마음이 있었나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q12">
+    <button class="opt-btn" onclick="selectSingle('q12',this,'네, 거의 결정한 상태였어요')"><span class="dot"></span>네, 거의 결정한 상태였어요</button>
+    <button class="opt-btn" onclick="selectSingle('q12',this,'어느 정도 마음은 있었지만 확신은 없었어요')"><span class="dot"></span>어느 정도 마음은 있었지만 확신은 없었어요</button>
+    <button class="opt-btn" onclick="selectSingle('q12',this,'아니오, 그런 생각은 없이 방문했어요')"><span class="dot"></span>아니오, 그런 생각은 없이 방문했어요</button>
+  </div>
+  <div class="err-msg" id="err-q12">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q12-val" name="q12">
+</div>
+
+<div class="card" id="card-q13">
+  <div class="q-label">Q13. 서점에서 제품에 대한 상담을 받으셨나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q13">
+    <button class="opt-btn" onclick="selectSingle('q13',this,'네, 충분한 상담을 받았어요')"><span class="dot"></span>네, 충분한 상담을 받았어요</button>
+    <button class="opt-btn" onclick="selectSingle('q13',this,'아기의 개월 수 등 간단한 상담만 받았어요')"><span class="dot"></span>아기의 개월 수 등 간단한 상담만 받았어요</button>
+    <button class="opt-btn" onclick="selectSingle('q13',this,'상담 없이 바로 구매했어요')"><span class="dot"></span>상담 없이 바로 구매했어요</button>
+  </div>
+  <div class="err-msg" id="err-q13">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q13-val" name="q13">
+</div>
+
+<div class="card" id="card-q14">
+  <div class="q-label">Q14. 서점 상담 이후 어떤 느낌이었나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q14">
+    <button class="opt-btn" onclick="selectSingle('q14',this,'궁금했던 부분이 해소되고 구매 확신이 생겼어요')"><span class="dot"></span>궁금했던 부분이 해소되고 구매 확신이 생겼어요</button>
+    <button class="opt-btn" onclick="selectSingle('q14',this,'이미 살 마음이 있었고 상담이 확신을 더해줬어요')"><span class="dot"></span>이미 살 마음이 있었고 상담이 확신을 더해줬어요</button>
+    <button class="opt-btn" onclick="selectSingle('q14',this,'상담보다는 실물을 보고 결정했어요')"><span class="dot"></span>상담보다는 실물을 보고 결정했어요</button>
+    <button class="opt-btn" onclick="selectSingle('q14',this,'상담이 크게 영향을 주진 않았어요')"><span class="dot"></span>상담이 크게 영향을 주진 않았어요</button>
+  </div>
+  <div class="err-msg" id="err-q14">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q14-val" name="q14">
+</div>
+
+<div class="card" id="card-q15">
+  <div class="q-label">Q15. 베베랑마마랑을 구매 전 망설였던 부분이 있나요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q15">
+    <button class="opt-btn" onclick="toggleMultiExclusive('q15',this,'아기가 좋아할지 몰라서','망설임 없었어요')"><span class="sq"></span>아기가 좋아할지 몰라서</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q15',this,'오래 활용할 수 있을지 몰라서','망설임 없었어요')"><span class="sq"></span>오래 활용할 수 있을지 몰라서</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q15',this,'구매 시기가 적절한지 몰라서','망설임 없었어요')"><span class="sq"></span>구매 시기가 적절한지 몰라서</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q15',this,'전집이 우리 아이한테 정말 필요한 건지 몰라서','망설임 없었어요')"><span class="sq"></span>전집이 우리 아이한테 정말 필요한 건지 몰라서</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q15',this,'한 번에 지불하기 다소 높은 가격이라서','망설임 없었어요')"><span class="sq"></span>한 번에 지불하기 다소 높은 가격이라서</button>
+    <button class="opt-btn exclusive" onclick="selectExclusive('q15',this,'망설임 없었어요')"><span class="sq"></span>망설임 없었어요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q15',this,'기타','망설임 없었어요',true)"><span class="sq"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q15" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q15">이 항목은 필수입니다.</div>
+</div>
+
+<div class="card" id="card-q16">
+  <div class="q-label">Q16. 최종적으로 구매를 결심하게 된 결정적인 이유는 무엇인가요?<span class="req">*</span></div>
+  <div class="options" id="opts-q16">
+    <button class="opt-btn" onclick="selectSingle('q16',this,'실물을 보니 구성과 품질이 만족스러워서')"><span class="dot"></span>실물을 보니 구성과 품질이 만족스러워서</button>
+    <button class="opt-btn" onclick="selectSingle('q16',this,'상담을 통해 우리 아이에게 필요하다는 확신이 생겨서')"><span class="dot"></span>상담을 통해 우리 아이에게 필요하다는 확신이 생겨서</button>
+    <button class="opt-btn" onclick="selectSingle('q16',this,'아이에게 보여줬을 때 반응이 괜찮아서')"><span class="dot"></span>아이에게 보여줬을 때 반응이 괜찮아서</button>
+    <button class="opt-btn" onclick="selectSingle('q16',this,'지금이 딱 좋은 시기라는 확신이 생겨서')"><span class="dot"></span>지금이 딱 좋은 시기라는 확신이 생겨서</button>
+    <button class="opt-btn" onclick="selectSingle('q16',this,'가격이나 혜택이 좋아서')"><span class="dot"></span>가격이나 혜택이 좋아서</button>
+    <button class="opt-btn" onclick="selectSingle('q16',this,'기타',true)"><span class="dot"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q16" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q16">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q16-val" name="q16">
+</div>
+
+<!-- SECTION 3-1 -->
+<div class="section-label" id="sec31-label" style="display:none;">SECTION 3-1. 체험북 경험</div>
+
+<div class="card hidden" id="card-q17">
+  <div class="q-label">Q17. 체험북을 신청하실 당시, 베베랑마마랑에 대해 얼마나 알고 계셨나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q17">
+    <button class="opt-btn" onclick="selectSingle('q17',this,'이미 충분히 알고 있었어요')"><span class="dot"></span>이미 충분히 알고 있었어요</button>
+    <button class="opt-btn" onclick="selectSingle('q17',this,'어느 정도 알고 있었어요')"><span class="dot"></span>어느 정도 알고 있었어요</button>
+    <button class="opt-btn" onclick="selectSingle('q17',this,'이름 정도만 알고 있었어요')"><span class="dot"></span>이름 정도만 알고 있었어요</button>
+    <button class="opt-btn" onclick="selectSingle('q17',this,'거의 모르는 상태였어요')"><span class="dot"></span>거의 모르는 상태였어요</button>
+  </div>
+  <div class="err-msg" id="err-q17">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q17-val" name="q17">
+</div>
+
+<div class="card hidden" id="card-q18">
+  <div class="q-label">Q18. 체험북에 대한 아이의 반응은 어떠했나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q18">
+    <button class="opt-btn" onclick="selectSingle('q18',this,'흥미를 보이며 잘 봤어요')"><span class="dot"></span>흥미를 보이며 잘 봤어요</button>
+    <button class="opt-btn" onclick="selectSingle('q18',this,'처음엔 관심 없었지만 나중엔 잘 봤어요')"><span class="dot"></span>처음엔 관심 없었지만 나중엔 잘 봤어요</button>
+    <button class="opt-btn" onclick="selectSingle('q18',this,'별로 관심을 보이지 않았어요')"><span class="dot"></span>별로 관심을 보이지 않았어요</button>
+  </div>
+  <div class="err-msg" id="err-q18">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q18-val" name="q18">
+</div>
+
+<div class="card hidden" id="card-q19">
+  <div class="q-label">Q19. 체험북이 서점 방문과 구매 결정에 도움이 됐나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q19">
+    <button class="opt-btn" onclick="selectSingle('q19',this,'네, 서점 방문과 구매 결정 모두에 도움이 됐어요')"><span class="dot"></span>네, 서점 방문과 구매 결정 모두에 도움이 됐어요</button>
+    <button class="opt-btn" onclick="selectSingle('q19',this,'서점 방문 계기는 됐지만 구매 결정에는 큰 영향이 없었어요')"><span class="dot"></span>서점 방문 계기는 됐지만 구매 결정에는 큰 영향이 없었어요</button>
+    <button class="opt-btn" onclick="selectSingle('q19',this,'아니오, 별로 도움이 되지 않았어요')"><span class="dot"></span>아니오, 별로 도움이 되지 않았어요</button>
+  </div>
+  <div class="err-msg" id="err-q19">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q19-val" name="q19">
+</div>
+
+<!-- SECTION 4 -->
+<div class="section-label">SECTION 4. 경험</div>
+
+<div class="card" id="card-q20">
+  <div class="q-label">Q20. 현재 베베랑마마랑을 얼마나 자주 활용하시나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q20">
+    <button class="opt-btn" onclick="selectSingle('q20',this,'거의 매일 활용해요')"><span class="dot"></span>거의 매일 활용해요</button>
+    <button class="opt-btn" onclick="selectSingle('q20',this,'주 3~4회 정도 활용해요')"><span class="dot"></span>주 3~4회 정도 활용해요</button>
+    <button class="opt-btn" onclick="selectSingle('q20',this,'주 1~2회 정도 활용해요')"><span class="dot"></span>주 1~2회 정도 활용해요</button>
+    <button class="opt-btn" onclick="selectSingle('q20',this,'거의 활용하지 않아요')"><span class="dot"></span>거의 활용하지 않아요</button>
+  </div>
+  <div class="err-msg" id="err-q20">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q20-val" name="q20">
+</div>
+
+<div class="card" id="card-q21">
+  <div class="q-label">Q21. 베베랑마마랑을 사용하면서 가장 만족스러운 점은 무엇인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q21">
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'[그림책] 그림체와 디자인이 마음에 들어요')"><span class="sq"></span>[그림책] 그림체와 디자인이 마음에 들어요</button>
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'[그림책] 아이 개월수에 맞는 내용이에요')"><span class="sq"></span>[그림책] 아이 개월수에 맞는 내용이에요</button>
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'[교구] 아이가 흥미롭게 잘 활용해요')"><span class="sq"></span>[교구] 아이가 흥미롭게 잘 활용해요</button>
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'[교구] 교구 구성이 풍성하고 알차요')"><span class="sq"></span>[교구] 교구 구성이 풍성하고 알차요</button>
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'[디지털] 음원·놀이영상을 잘 활용하고 있어요')"><span class="sq"></span>[디지털] 음원·놀이영상을 잘 활용하고 있어요</button>
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'[전체] 아이 발달에 도움이 되는 것 같아요')"><span class="sq"></span>[전체] 아이 발달에 도움이 되는 것 같아요</button>
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'[전체] 부모와 아이가 함께 활용하기 좋아요')"><span class="sq"></span>[전체] 부모와 아이가 함께 활용하기 좋아요</button>
+    <button class="opt-btn" onclick="toggleMulti('q21',this,'기타',true)"><span class="sq"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q21" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q21">이 항목은 필수입니다.</div>
+</div>
+
+<div class="card" id="card-q22">
+  <div class="q-label">Q22. 베베랑마마랑을 사용하면서 가장 아쉬운 점은 무엇인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q22">
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[그림책] 그림체가 아이 시선을 끌기에 부족해요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[그림책] 그림체가 아이 시선을 끌기에 부족해요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[그림책] 책의 내용·난이도가 아이와 맞지 않아요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[그림책] 책의 내용·난이도가 아이와 맞지 않아요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[교구] 교구 품질이 아쉬워요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[교구] 교구 품질이 아쉬워요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[교구] 어떻게 활용해야 할지 어려워요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[교구] 어떻게 활용해야 할지 어려워요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[디지털] 앱/음원 활용이 불편해요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[디지털] 앱/음원 활용이 불편해요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[디지털] 놀이영상 콘텐츠가 아쉬워요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[디지털] 놀이영상 콘텐츠가 아쉬워요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[전체] 가격 대비 구성이 아쉬워요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[전체] 가격 대비 구성이 아쉬워요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'[전체] 아이가 생각보다 관심을 보이지 않아요','특별히 아쉬운 점이 없어요')"><span class="sq"></span>[전체] 아이가 생각보다 관심을 보이지 않아요</button>
+    <button class="opt-btn exclusive" onclick="selectExclusive('q22',this,'특별히 아쉬운 점이 없어요')"><span class="sq"></span>특별히 아쉬운 점이 없어요</button>
+    <button class="opt-btn" onclick="toggleMultiExclusive('q22',this,'기타','특별히 아쉬운 점이 없어요',true)"><span class="sq"></span>기타</button>
+  </div>
+  <input type="text" class="other-input" id="other-q22" placeholder="직접 입력해주세요">
+  <div class="err-msg" id="err-q22">이 항목은 필수입니다.</div>
+</div>
+
+<div class="card" id="card-q23">
+  <div class="q-label">Q23. 어떤 구성을 주로 활용하고 계신가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="options" id="opts-q23">
+    <button class="opt-btn" onclick="toggleMulti('q23',this,'그림책')"><span class="sq"></span>그림책</button>
+    <button class="opt-btn" onclick="toggleMulti('q23',this,'교구')"><span class="sq"></span>교구</button>
+    <button class="opt-btn" onclick="toggleMulti('q23',this,'이야기동요')"><span class="sq"></span>이야기동요</button>
+    <button class="opt-btn" onclick="toggleMulti('q23',this,'놀이영상')"><span class="sq"></span>놀이영상</button>
+    <button class="opt-btn" onclick="toggleMulti('q23',this,'부모 가이드북')"><span class="sq"></span>부모 가이드북</button>
+  </div>
+  <div class="err-msg" id="err-q23">이 항목은 필수입니다.</div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section-label">SECTION 5. 충성</div>
+
+<div class="card" id="card-q24">
+  <div class="q-label">Q24. 주변에 베베랑마마랑을 추천할 의향이 있으신가요?<span class="req">*</span></div>
+  <div class="scale-wrap">
+    <div class="scale-row" id="scale-q24">
+      <button class="scale-btn" data-val="1" onclick="selectScale(1,'q24')">1</button>
+      <button class="scale-btn" data-val="2" onclick="selectScale(2,'q24')">2</button>
+      <button class="scale-btn" data-val="3" onclick="selectScale(3,'q24')">3</button>
+      <button class="scale-btn" data-val="4" onclick="selectScale(4,'q24')">4</button>
+      <button class="scale-btn" data-val="5" onclick="selectScale(5,'q24')">5</button>
+      <button class="scale-btn" data-val="6" onclick="selectScale(6,'q24')">6</button>
+      <button class="scale-btn" data-val="7" onclick="selectScale(7,'q24')">7</button>
+      <button class="scale-btn" data-val="8" onclick="selectScale(8,'q24')">8</button>
+      <button class="scale-btn" data-val="9" onclick="selectScale(9,'q24')">9</button>
+      <button class="scale-btn" data-val="10" onclick="selectScale(10,'q24')">10</button>
+    </div>
+    <div class="scale-labels"><span>매우 비추천</span><span>매우 추천</span></div>
+  </div>
+  <div class="err-msg" id="err-q24">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q24-val" name="q24">
+</div>
+
+<div class="card" id="card-q25">
+  <div class="q-label">Q25. 베베랑마마랑을 경험하신 후, 그레이트북스의 다른 제품에 관심이 생기셨나요?<span class="req">*</span></div>
+  <div class="options" id="opts-q25">
+    <button class="opt-btn" onclick="selectSingle('q25',this,'네, 이미 다른 제품을 구매했어요')"><span class="dot"></span>네, 이미 다른 제품을 구매했어요</button>
+    <button class="opt-btn" onclick="selectSingle('q25',this,'네, 관심은 생겼지만 구매하진 않았어요')"><span class="dot"></span>네, 관심은 생겼지만 구매하진 않았어요</button>
+    <button class="opt-btn" onclick="selectSingle('q25',this,'아니오, 아직 잘 모르겠어요')"><span class="dot"></span>아니오, 아직 잘 모르겠어요</button>
+  </div>
+  <div class="err-msg" id="err-q25">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q25-val" name="q25">
+</div>
+
+<div class="submit-area">
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">설문 제출하기 →</button>
+  <p style="text-align:center;margin-top:10px;font-size:12px;color:var(--gray);">* 표시는 필수 문항입니다</p>
+</div>
+
+</div><!-- /form-body -->
+</div><!-- /surveyForm -->
+
+<div class="complete-screen" id="completeScreen">
+  <div class="complete-icon">🎉</div>
+  <div class="complete-title">응답이 완료되었습니다!</div>
+  <div class="complete-sub">소중한 의견 감사합니다.💙<br>기프티콘은 발송 안내 문자로 전달드릴 예정입니다.</div>
+</div>
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzPxLm3Y1Q0A4jHB1bYd6cZNvCBawaOs11UGWbTAwdT7OdCBcMKGoH3mOVZWgAU8OkP/exec";
+
+// ─── State ───────────────────────────────────────────
+const multiState = {};
+const scaleState = {};
+const singleState = {};
+
+let sec31Visible = false;
+
+// Required questions (base)
+const BASE_REQUIRED = ['q1','q2','q3','q4','q5','q6','q7','q8','q11','q12','q13','q14','q15','q16','q20','q21','q22','q23','q24','q25'];
+// Conditional required
+let conditionalRequired = [];
+
+// ─── Single select ────────────────────────────────────
+function selectSingle(qid, btn, val, hasOther) {
+  document.querySelectorAll('#opts-' + qid + ' .opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  singleState[qid] = val;
+  const hiddenEl = document.getElementById(qid + '-val');
+  if (hiddenEl) hiddenEl.value = val;
+  if (hasOther) {
+    document.getElementById('other-' + qid).style.display = 'block';
+  } else {
+    const oi = document.getElementById('other-' + qid);
+    if (oi) oi.style.display = 'none';
+  }
+  clearErr(qid);
+  updateProgress();
+}
+
+// ─── Multi select ─────────────────────────────────────
+function toggleMulti(qid, btn, val, hasOther) {
+  if (!multiState[qid]) multiState[qid] = [];
+  const idx = multiState[qid].indexOf(val);
+  if (idx === -1) {
+    multiState[qid].push(val);
+    btn.classList.add('selected');
+  } else {
+    multiState[qid].splice(idx, 1);
+    btn.classList.remove('selected');
+  }
+  if (hasOther) {
+    document.getElementById('other-' + qid).style.display = btn.classList.contains('selected') ? 'block' : 'none';
+  }
+  clearErr(qid);
+  updateProgress();
+}
+
+// ─── Multi with exclusive ─────────────────────────────
+function toggleMultiExclusive(qid, btn, val, exclusiveVal, hasOther) {
+  if (!multiState[qid]) multiState[qid] = [];
+  // Remove exclusive if present
+  const exIdx = multiState[qid].indexOf(exclusiveVal);
+  if (exIdx !== -1) {
+    multiState[qid].splice(exIdx, 1);
+    document.querySelectorAll('#opts-' + qid + ' .opt-btn.exclusive').forEach(b => b.classList.remove('selected'));
+  }
+  const idx = multiState[qid].indexOf(val);
+  if (idx === -1) {
+    multiState[qid].push(val);
+    btn.classList.add('selected');
+  } else {
+    multiState[qid].splice(idx, 1);
+    btn.classList.remove('selected');
+  }
+  if (hasOther) {
+    document.getElementById('other-' + qid).style.display = btn.classList.contains('selected') ? 'block' : 'none';
+  }
+  clearErr(qid);
+  updateProgress();
+}
+
+function selectExclusive(qid, btn, val) {
+  if (!multiState[qid]) multiState[qid] = [];
+  // Clear all
+  multiState[qid] = [val];
+  document.querySelectorAll('#opts-' + qid + ' .opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  // Hide other input
+  const oi = document.getElementById('other-' + qid);
+  if (oi) oi.style.display = 'none';
+  clearErr(qid);
+  updateProgress();
+}
+
+// ─── Scale select ─────────────────────────────────────
+function selectScale(val, qid) {
+  scaleState[qid] = val;
+  document.getElementById(qid + '-val').value = val;
+  document.querySelectorAll('#scale-' + qid + ' .scale-btn').forEach(btn => {
+    btn.classList.toggle('selected', parseInt(btn.dataset.val) === val);
+  });
+  clearErr(qid);
+  updateProgress();
+}
+
+// ─── Conditional visibility ───────────────────────────
+function showQ9(show) {
+  toggleCard('card-q9', show);
+  toggleCard('card-q10', show);
+  if (show) {
+    if (!conditionalRequired.includes('q9')) conditionalRequired.push('q9');
+    if (!conditionalRequired.includes('q10')) conditionalRequired.push('q10');
+  } else {
+    conditionalRequired = conditionalRequired.filter(q => q !== 'q9' && q !== 'q10' && q !== 'q10_1');
+    toggleCard('card-q10_1', false);
+  }
+  updateProgress();
+}
+
+function showQ10_1(show) {
+  toggleCard('card-q10_1', show);
+  if (show) {
+    if (!conditionalRequired.includes('q10_1')) conditionalRequired.push('q10_1');
+  } else {
+    conditionalRequired = conditionalRequired.filter(q => q !== 'q10_1');
+  }
+  updateProgress();
+}
+
+function showSec31(show) {
+  sec31Visible = show;
+  document.getElementById('sec31-label').style.display = show ? 'block' : 'none';
+  toggleCard('card-q17', show);
+  toggleCard('card-q18', show);
+  toggleCard('card-q19', show);
+  if (show) {
+    ['q17','q18','q19'].forEach(q => { if (!conditionalRequired.includes(q)) conditionalRequired.push(q); });
+  } else {
+    conditionalRequired = conditionalRequired.filter(q => !['q17','q18','q19'].includes(q));
+  }
+  updateProgress();
+}
+
+function toggleCard(id, show) {
+  const el = document.getElementById(id);
+  if (el) {
+    if (show) el.classList.remove('hidden');
+    else el.classList.add('hidden');
+  }
+}
+
+// ─── Progress ─────────────────────────────────────────
+function updateProgress() {
+  const allRequired = [...BASE_REQUIRED, ...conditionalRequired];
+  let answered = 0;
+  allRequired.forEach(qid => {
+    if (isAnswered(qid)) answered++;
+  });
+  const pct = Math.round((answered / allRequired.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function isAnswered(qid) {
+  if (multiState[qid] && multiState[qid].length > 0) return true;
+  if (singleState[qid]) return true;
+  if (scaleState[qid]) return true;
+  const hiddenEl = document.getElementById(qid + '-val');
+  if (hiddenEl && hiddenEl.value) return true;
+  return false;
+}
+
+// ─── Error handling ───────────────────────────────────
+function clearErr(qid) {
+  const err = document.getElementById('err-' + qid);
+  if (err) err.classList.remove('show');
+  const card = document.getElementById('card-' + qid);
+  if (card) card.classList.remove('error');
+}
+
+function showErr(qid) {
+  const err = document.getElementById('err-' + qid);
+  if (err) err.classList.add('show');
+  const card = document.getElementById('card-' + qid);
+  if (card) card.classList.add('error');
+}
+
+// ─── Validation ───────────────────────────────────────
+function validate() {
+  const allRequired = [...BASE_REQUIRED, ...conditionalRequired];
+  let firstErr = null;
+  let valid = true;
+  allRequired.forEach(qid => {
+    if (!isAnswered(qid)) {
+      showErr(qid);
+      if (!firstErr) firstErr = document.getElementById('card-' + qid);
+      valid = false;
+    }
+  });
+  if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  return valid;
+}
+
+// ─── Collect data ─────────────────────────────────────
+function collectData() {
+  const data = { type: 'A', timestamp: new Date().toISOString() };
+  [...BASE_REQUIRED, ...conditionalRequired].forEach(qid => {
+    if (multiState[qid]) {
+      data[qid] = multiState[qid].join('|');
+      const oi = document.getElementById('other-' + qid);
+      if (oi && oi.style.display !== 'none' && oi.value.trim()) {
+        data[qid + '_other'] = oi.value.trim();
+      }
+    } else if (scaleState[qid]) {
+      data[qid] = scaleState[qid];
+    } else {
+      const hiddenEl = document.getElementById(qid + '-val');
+      if (hiddenEl) data[qid] = hiddenEl.value;
+      const oi = document.getElementById('other-' + qid);
+      if (oi && oi.style.display !== 'none' && oi.value.trim()) {
+        data[qid + '_other'] = oi.value.trim();
+      }
+    }
+  });
+  return data;
+}
+
+// ─── Submit ───────────────────────────────────────────
+async function submitForm() {
+  if (!validate()) return;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '제출 중...';
+  const data = collectData();
+  try {
+    if (SHEET_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    }
+    document.getElementById('surveyForm').style.display = 'none';
+    document.getElementById('completeScreen').style.display = 'block';
+    window.scrollTo(0, 0);
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = '설문 제출하기 →';
+    alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+  }
+}
+
+// Init
+updateProgress();
+</script>
+</body>
+</html>
