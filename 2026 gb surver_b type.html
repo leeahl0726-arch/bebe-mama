@@ -260,6 +260,12 @@
 </head>
 <body>
 
+<div id="closedScreen" style="display:none;text-align:center;padding:80px 24px;max-width:400px;margin:0 auto;">
+  <div style="font-size:52px;margin-bottom:20px;">🔒</div>
+  <div style="font-size:20px;font-weight:800;color:#5BA4CF;margin-bottom:12px;">응답기간이 종료되었습니다.</div>
+  <div style="font-size:14px;color:#888;line-height:1.7;">설문에 관심 가져주셔서 감사합니다.<br>참여 기간: 6월 26일(금) ~ 7월 5일(일)</div>
+</div>
+
 <div id="surveyForm">
 
 <div class="header">
@@ -267,8 +273,9 @@
   <div class="header-title">베베랑마마랑 고객 설문조사</div>
   <div class="header-sub">체험북 경험에 대한 솔직한 의견을 들려주세요 💙<br>소중한 의견이 더 좋은 제품을 만드는 데 큰 도움이 됩니다.</div>
   <div class="header-info">
-    ⏱ 소요시간 약 3~5분 &nbsp;|&nbsp; 🔒 익명 처리<br>
-    📌 모든 문항은 필수입니다 (마지막 자유의견 제외)
+    ⏱ 소요시간 약 2~3분 &nbsp;|&nbsp; 📌 모든 문항은 필수입니다<br>
+    🔒 응답은 익명으로 처리됩니다<br>
+    🎁 응답을 완료해주신 분들께 소정의 상품(기프티콘)을 드립니다.
   </div>
 </div>
 
@@ -420,56 +427,47 @@
 </div>
 
 <div class="card" id="card-q9">
-  <div class="q-label">Q9. 베베랑마마랑 외에 다른 영아 전집과 비교해보셨나요?<span class="req">*</span></div>
+  <div class="q-label">Q9. 베베랑마마랑 외에 다른 영아 전집을 살펴보셨나요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
   <div class="options" id="opts-q9">
-    <button class="opt-btn" onclick="selectSingle('q9',this,'네, 비교해봤어요'); showQ10(true)"><span class="dot"></span>네, 비교해봤어요</button>
-    <button class="opt-btn" onclick="selectSingle('q9',this,'아니오, 비교하지 않았어요'); showQ10(false)"><span class="dot"></span>아니오, 비교하지 않았어요</button>
+    <button class="opt-btn" onclick="toggleQ9Brand(this,'프뢰벨 - 영아다중')"><span class="sq"></span>프뢰벨 - 영아다중</button>
+    <button class="opt-btn" onclick="toggleQ9Brand(this,'한솔 - 핀덴베베')"><span class="sq"></span>한솔 - 핀덴베베</button>
+    <button class="opt-btn" onclick="toggleQ9Brand(this,'아람 - 베이비올 아기')"><span class="sq"></span>아람 - 베이비올 아기</button>
+    <button class="opt-btn" onclick="toggleQ9Brand(this,'블루래빗')"><span class="sq"></span>블루래빗</button>
+    <button class="opt-btn" onclick="toggleQ9Brand(this,'두두스토리')"><span class="sq"></span>두두스토리</button>
+    <button class="opt-btn" onclick="toggleQ9Brand(this,'기타',true)"><span class="sq"></span>기타</button>
+    <button class="opt-btn exclusive" onclick="selectQ9None(this)"><span class="sq"></span>살펴본 제품이 없어요</button>
   </div>
+  <input type="text" class="other-input" id="other-q9" placeholder="직접 입력해주세요">
   <div class="err-msg" id="err-q9">이 항목은 필수입니다.</div>
-  <input type="hidden" id="q9-val" name="q9">
 </div>
 
 <div class="card hidden" id="card-q10">
-  <div class="q-label">Q10. 비교한 제품은 무엇인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="q-label">Q10. 비교 후 실제로 구매한 제품이 있으신가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
   <div class="options" id="opts-q10">
-    <button class="opt-btn" onclick="toggleMulti('q10',this,'프뢰벨 - 영아다중')"><span class="sq"></span>프뢰벨 - 영아다중</button>
-    <button class="opt-btn" onclick="toggleMulti('q10',this,'한솔 - 핀덴베베')"><span class="sq"></span>한솔 - 핀덴베베</button>
-    <button class="opt-btn" onclick="toggleMulti('q10',this,'아람 - 베이비올 아기')"><span class="sq"></span>아람 - 베이비올 아기</button>
-    <button class="opt-btn" onclick="toggleMulti('q10',this,'블루래빗')"><span class="sq"></span>블루래빗</button>
-    <button class="opt-btn" onclick="toggleMulti('q10',this,'두두스토리')"><span class="sq"></span>두두스토리</button>
-    <button class="opt-btn" onclick="toggleMulti('q10',this,'기타',true)"><span class="sq"></span>기타</button>
+    <button class="opt-btn" onclick="toggleMultiWithQ11('q10',this,'프뢰벨 - 영아다중')"><span class="sq"></span>프뢰벨 - 영아다중</button>
+    <button class="opt-btn" onclick="toggleMultiWithQ11('q10',this,'한솔 - 핀덴베베')"><span class="sq"></span>한솔 - 핀덴베베</button>
+    <button class="opt-btn" onclick="toggleMultiWithQ11('q10',this,'아람 - 베이비올 아기')"><span class="sq"></span>아람 - 베이비올 아기</button>
+    <button class="opt-btn" onclick="toggleMultiWithQ11('q10',this,'블루래빗')"><span class="sq"></span>블루래빗</button>
+    <button class="opt-btn" onclick="toggleMultiWithQ11('q10',this,'두두스토리')"><span class="sq"></span>두두스토리</button>
+    <button class="opt-btn" onclick="toggleMultiWithQ11('q10',this,'기타',true)"><span class="sq"></span>기타</button>
+    <button class="opt-btn exclusive" onclick="selectExclusiveQ10(this,'구매한 제품은 없어요')"><span class="sq"></span>구매한 제품은 없어요</button>
   </div>
   <input type="text" class="other-input" id="other-q10" placeholder="직접 입력해주세요">
   <div class="err-msg" id="err-q10">이 항목은 필수입니다.</div>
 </div>
 
 <div class="card hidden" id="card-q11">
-  <div class="q-label">Q11. 비교 후 실제로 구매한 제품이 있으신가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
+  <div class="q-label">Q11. 베베랑마마랑 대신 해당 제품을 선택한 이유는 무엇인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
   <div class="options" id="opts-q11">
-    <button class="opt-btn" onclick="toggleMultiWithQ12('q11',this,'프뢰벨 - 영아다중')"><span class="sq"></span>프뢰벨 - 영아다중</button>
-    <button class="opt-btn" onclick="toggleMultiWithQ12('q11',this,'한솔 - 핀덴베베')"><span class="sq"></span>한솔 - 핀덴베베</button>
-    <button class="opt-btn" onclick="toggleMultiWithQ12('q11',this,'아람 - 베이비올 아기')"><span class="sq"></span>아람 - 베이비올 아기</button>
-    <button class="opt-btn" onclick="toggleMultiWithQ12('q11',this,'블루래빗')"><span class="sq"></span>블루래빗</button>
-    <button class="opt-btn" onclick="toggleMultiWithQ12('q11',this,'두두스토리')"><span class="sq"></span>두두스토리</button>
-    <button class="opt-btn exclusive" onclick="selectExclusiveQ11(this,'구매한 제품은 없어요')"><span class="sq"></span>구매한 제품은 없어요</button>
-    <button class="opt-btn" onclick="toggleMultiWithQ12('q11',this,'기타',true)"><span class="sq"></span>기타</button>
+    <button class="opt-btn" onclick="toggleMulti('q11',this,'전집의 구성이 더 마음에 들어서')"><span class="sq"></span>전집의 구성이 더 마음에 들어서</button>
+    <button class="opt-btn" onclick="toggleMulti('q11',this,'아기 개월수에 더 잘 맞을 것 같아서')"><span class="sq"></span>아기 개월수에 더 잘 맞을 것 같아서</button>
+    <button class="opt-btn" onclick="toggleMulti('q11',this,'가격이 더 합리적이어서')"><span class="sq"></span>가격이 더 합리적이어서</button>
+    <button class="opt-btn" onclick="toggleMulti('q11',this,'후기나 추천이 더 많아서')"><span class="sq"></span>후기나 추천이 더 많아서</button>
+    <button class="opt-btn" onclick="toggleMulti('q11',this,'브랜드가 더 익숙하고 신뢰가 가서')"><span class="sq"></span>브랜드가 더 익숙하고 신뢰가 가서</button>
+    <button class="opt-btn" onclick="toggleMulti('q11',this,'기타',true)"><span class="sq"></span>기타</button>
   </div>
   <input type="text" class="other-input" id="other-q11" placeholder="직접 입력해주세요">
   <div class="err-msg" id="err-q11">이 항목은 필수입니다.</div>
-</div>
-
-<div class="card hidden" id="card-q12">
-  <div class="q-label">Q12. 베베랑마마랑 대신 해당 제품을 선택한 이유는 무엇인가요?<span class="req">*</span><span class="multi-badge">복수선택</span></div>
-  <div class="options" id="opts-q12">
-    <button class="opt-btn" onclick="toggleMulti('q12',this,'전집의 구성이 더 마음에 들어서')"><span class="sq"></span>전집의 구성이 더 마음에 들어서</button>
-    <button class="opt-btn" onclick="toggleMulti('q12',this,'아기 개월수에 더 잘 맞을 것 같아서')"><span class="sq"></span>아기 개월수에 더 잘 맞을 것 같아서</button>
-    <button class="opt-btn" onclick="toggleMulti('q12',this,'가격이 더 합리적이어서')"><span class="sq"></span>가격이 더 합리적이어서</button>
-    <button class="opt-btn" onclick="toggleMulti('q12',this,'후기나 추천이 더 많아서')"><span class="sq"></span>후기나 추천이 더 많아서</button>
-    <button class="opt-btn" onclick="toggleMulti('q12',this,'브랜드가 더 익숙하고 신뢰가 가서')"><span class="sq"></span>브랜드가 더 익숙하고 신뢰가 가서</button>
-    <button class="opt-btn" onclick="toggleMulti('q12',this,'기타',true)"><span class="sq"></span>기타</button>
-  </div>
-  <input type="text" class="other-input" id="other-q12" placeholder="직접 입력해주세요">
-  <div class="err-msg" id="err-q12">이 항목은 필수입니다.</div>
 </div>
 
 <div class="submit-area">
@@ -483,7 +481,7 @@
 <div class="complete-screen" id="completeScreen">
   <div class="complete-icon">🎉</div>
   <div class="complete-title">응답이 완료되었습니다!</div>
-  <div class="complete-sub">소중한 의견 감사합니다.💙<br>기프티콘은 발송 안내 문자로 전달드릴 예정입니다.</div>
+  <div class="complete-sub">소중한 의견 감사합니다.💙<br>기프티콘은 문자를 통해 설문 종료일로부터 일주일 이내 발송 예정입니다.</div>
 </div>
 
 <script>
@@ -544,10 +542,63 @@ function toggleMulti(qid, btn, val, hasOther, triggersSubQ) {
   updateProgress();
 }
 
-// ─── Q11 multi with Q12 toggle ───────────────────────
-function toggleMultiWithQ12(qid, btn, val, hasOther) {
+// ─── Q9: 브랜드 복수선택 + "살펴본 제품 없음" 상호배타 ──
+function toggleQ9Brand(btn, val, hasOther) {
+  if (!multiState['q9']) multiState['q9'] = [];
+  // 상호배타 제거
+  const exIdx = multiState['q9'].indexOf('살펴본 제품이 없어요');
+  if (exIdx !== -1) {
+    multiState['q9'].splice(exIdx, 1);
+    document.querySelectorAll('#opts-q9 .opt-btn.exclusive').forEach(b => b.classList.remove('selected'));
+  }
+  const idx = multiState['q9'].indexOf(val);
+  if (idx === -1) {
+    multiState['q9'].push(val);
+    btn.classList.add('selected');
+  } else {
+    multiState['q9'].splice(idx, 1);
+    btn.classList.remove('selected');
+  }
+  if (hasOther) {
+    document.getElementById('other-q9').style.display = btn.classList.contains('selected') ? 'block' : 'none';
+  }
+  // 브랜드 선택 있으면 Q10 노출
+  const hasBrand = multiState['q9'].filter(v => v !== '살펴본 제품이 없어요').length > 0;
+  toggleCard('card-q10', hasBrand);
+  if (hasBrand) {
+    if (!conditionalRequired.includes('q10')) conditionalRequired.push('q10');
+  } else {
+    conditionalRequired = conditionalRequired.filter(q => q !== 'q10' && q !== 'q11');
+    toggleCard('card-q11', false);
+    if (multiState['q10']) multiState['q10'] = [];
+    if (multiState['q11']) multiState['q11'] = [];
+    document.querySelectorAll('#opts-q10 .opt-btn, #opts-q11 .opt-btn').forEach(b => b.classList.remove('selected'));
+  }
+  clearErr('q9');
+  updateProgress();
+}
+
+function selectQ9None(btn) {
+  if (!multiState['q9']) multiState['q9'] = [];
+  multiState['q9'] = ['살펴본 제품이 없어요'];
+  document.querySelectorAll('#opts-q9 .opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('other-q9').style.display = 'none';
+  // Q10/Q11 숨김
+  toggleCard('card-q10', false);
+  toggleCard('card-q11', false);
+  conditionalRequired = conditionalRequired.filter(q => q !== 'q10' && q !== 'q11');
+  if (multiState['q10']) multiState['q10'] = [];
+  if (multiState['q11']) multiState['q11'] = [];
+  document.querySelectorAll('#opts-q10 .opt-btn, #opts-q11 .opt-btn').forEach(b => b.classList.remove('selected'));
+  clearErr('q9');
+  updateProgress();
+}
+
+// ─── Q10 multi with Q11 toggle ───────────────────────
+function toggleMultiWithQ11(qid, btn, val, hasOther) {
   if (!multiState[qid]) multiState[qid] = [];
-  // Remove exclusive
+  // 상호배타 제거
   const exIdx = multiState[qid].indexOf('구매한 제품은 없어요');
   if (exIdx !== -1) {
     multiState[qid].splice(exIdx, 1);
@@ -564,48 +615,36 @@ function toggleMultiWithQ12(qid, btn, val, hasOther) {
   if (hasOther) {
     document.getElementById('other-' + qid).style.display = btn.classList.contains('selected') ? 'block' : 'none';
   }
-  // Show Q12 if any actual product selected
-  const hasPurchase = multiState['q11'] && multiState['q11'].filter(v => v !== '구매한 제품은 없어요').length > 0;
-  toggleCard('card-q12', hasPurchase);
+  // 실제 구매 제품 있으면 Q11 노출
+  const hasPurchase = multiState['q10'] && multiState['q10'].filter(v => v !== '구매한 제품은 없어요').length > 0;
+  toggleCard('card-q11', hasPurchase);
   if (hasPurchase) {
-    if (!conditionalRequired.includes('q12')) conditionalRequired.push('q12');
+    if (!conditionalRequired.includes('q11')) conditionalRequired.push('q11');
   } else {
-    conditionalRequired = conditionalRequired.filter(q => q !== 'q12');
+    conditionalRequired = conditionalRequired.filter(q => q !== 'q11');
+    if (multiState['q11']) multiState['q11'] = [];
+    document.querySelectorAll('#opts-q11 .opt-btn').forEach(b => b.classList.remove('selected'));
   }
   clearErr(qid);
   updateProgress();
 }
 
-function selectExclusiveQ11(btn, val) {
-  if (!multiState['q11']) multiState['q11'] = [];
-  multiState['q11'] = [val];
-  document.querySelectorAll('#opts-q11 .opt-btn').forEach(b => b.classList.remove('selected'));
+function selectExclusiveQ10(btn, val) {
+  if (!multiState['q10']) multiState['q10'] = [];
+  multiState['q10'] = [val];
+  document.querySelectorAll('#opts-q10 .opt-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
-  const oi = document.getElementById('other-q11');
+  const oi = document.getElementById('other-q10');
   if (oi) oi.style.display = 'none';
-  // Hide Q12
-  toggleCard('card-q12', false);
-  conditionalRequired = conditionalRequired.filter(q => q !== 'q12');
-  clearErr('q11');
+  toggleCard('card-q11', false);
+  conditionalRequired = conditionalRequired.filter(q => q !== 'q11');
+  if (multiState['q11']) multiState['q11'] = [];
+  clearErr('q10');
   updateProgress();
 }
 
-// ─── Conditional visibility ───────────────────────────
-function showQ10(show) {
-  toggleCard('card-q10', show);
-  toggleCard('card-q11', show);
-  if (show) {
-    if (!conditionalRequired.includes('q10')) conditionalRequired.push('q10');
-    if (!conditionalRequired.includes('q11')) conditionalRequired.push('q11');
-  } else {
-    conditionalRequired = conditionalRequired.filter(q => q !== 'q10' && q !== 'q11' && q !== 'q12');
-    toggleCard('card-q12', false);
-    if (multiState['q10']) multiState['q10'] = [];
-    if (multiState['q11']) multiState['q11'] = [];
-    document.querySelectorAll('#opts-q10 .opt-btn, #opts-q11 .opt-btn').forEach(b => b.classList.remove('selected'));
-  }
-  updateProgress();
-}
+// ─── Conditional visibility (legacy stub) ────────────
+function showQ10(show) {} // Q9 복수선택으로 대체됨
 
 function toggleCard(id, show) {
   const el = document.getElementById(id);
@@ -711,8 +750,19 @@ async function submitForm() {
   }
 }
 
+// ─── 응답 기간 체크 ──────────────────────────────────
+(function() {
+  const now = new Date();
+  const end = new Date('2026-07-05T23:59:59+09:00');
+  if (now > end) {
+    document.getElementById('surveyForm').style.display = 'none';
+    document.getElementById('closedScreen').style.display = 'block';
+  }
+})();
+
 // Init
 updateProgress();
 </script>
 </body>
 </html>
+
