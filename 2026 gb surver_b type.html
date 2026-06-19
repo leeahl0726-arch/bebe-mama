@@ -485,6 +485,32 @@
   <div class="err-msg" id="err-phone">연락처를 입력해주세요.</div>
 </div>
 
+<div class="card" id="card-q12">
+  <div class="q-label">Q12. 현재 다른 영아 전집을 사용 중이신가요?<span class="req">*</span></div>
+  <div class="options" id="opts-q12">
+    <button class="opt-btn" onclick="selectSingle('q12',this,'네, 사용 중이에요'); showQ12_1(true)"><span class="dot"></span>네, 사용 중이에요</button>
+    <button class="opt-btn" onclick="selectSingle('q12',this,'아니오, 사용하지 않아요'); showQ12_1(false)"><span class="dot"></span>아니오, 사용하지 않아요</button>
+  </div>
+  <div class="err-msg" id="err-q12">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q12-val" name="q12">
+</div>
+
+<div class="card hidden" id="card-q12_1">
+  <div class="q-label">Q12-1. 사용 중인 전집에 대한 만족도는 어떠신가요?<span class="req">*</span></div>
+  <div class="scale-wrap">
+    <div class="scale-row" id="scale-q12_1">
+      <button class="scale-btn" data-val="1" onclick="selectScale(1,'q12_1')">1</button>
+      <button class="scale-btn" data-val="2" onclick="selectScale(2,'q12_1')">2</button>
+      <button class="scale-btn" data-val="3" onclick="selectScale(3,'q12_1')">3</button>
+      <button class="scale-btn" data-val="4" onclick="selectScale(4,'q12_1')">4</button>
+      <button class="scale-btn" data-val="5" onclick="selectScale(5,'q12_1')">5</button>
+    </div>
+    <div class="scale-labels"><span>매우 불만족</span><span>매우 만족</span></div>
+  </div>
+  <div class="err-msg" id="err-q12_1">이 항목은 필수입니다.</div>
+  <input type="hidden" id="q12_1-val" name="q12_1">
+</div>
+
 <div class="card" id="card-privacy">
   <div class="q-label">개인정보 수집 및 이용 동의<span class="req">*</span></div>
   <div style="background:var(--primary-pale);border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:12px;color:#555;line-height:1.8;margin-bottom:12px;">
@@ -514,13 +540,14 @@
 </div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbzLxl2MFDm7WGMJfiet8tKVqXIXDPdFvA7ftyYtRWPJA-h24FRTHyq_ttdSehesSPiw/exec";
+const SHEET_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
 // ─── State ───────────────────────────────────────────
 const multiState = {};
 const singleState = {};
+const scaleState = {};
 
-const BASE_REQUIRED = ['q1','q2','q3','q4','q5','q6','q7','q8','q9','privacy'];
+const BASE_REQUIRED = ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q12','privacy'];
 let conditionalRequired = [];
 
 // ─── Single select ────────────────────────────────────
@@ -683,6 +710,33 @@ function toggleCard(id, show) {
   }
 }
 
+// ─── Scale select ─────────────────────────────────────
+function selectScale(val, qid) {
+  scaleState[qid] = val;
+  const hiddenEl = document.getElementById(qid + '-val');
+  if (hiddenEl) hiddenEl.value = val;
+  document.querySelectorAll('#scale-' + qid + ' .scale-btn').forEach(btn => {
+    btn.classList.toggle('selected', parseInt(btn.dataset.val) === val);
+  });
+  clearErr(qid);
+  updateProgress();
+}
+
+// ─── Q12-1 toggle ─────────────────────────────────────
+function showQ12_1(show) {
+  toggleCard('card-q12_1', show);
+  if (show) {
+    if (!conditionalRequired.includes('q12_1')) conditionalRequired.push('q12_1');
+  } else {
+    conditionalRequired = conditionalRequired.filter(q => q !== 'q12_1');
+    delete scaleState['q12_1'];
+    const el = document.getElementById('q12_1-val');
+    if (el) el.value = '';
+    document.querySelectorAll('#scale-q12_1 .scale-btn').forEach(b => b.classList.remove('selected'));
+  }
+  updateProgress();
+}
+
 // ─── Progress ─────────────────────────────────────────
 function updateProgress() {
   const allRequired = [...BASE_REQUIRED, ...conditionalRequired];
@@ -698,6 +752,7 @@ function updateProgress() {
 function isAnswered(qid) {
   if (multiState[qid] && multiState[qid].length > 0) return true;
   if (singleState[qid]) return true;
+  if (scaleState[qid] !== undefined) return true;
   const hiddenEl = document.getElementById(qid + '-val');
   if (hiddenEl && hiddenEl.value) return true;
   return false;
@@ -759,6 +814,8 @@ function collectData() {
       if (oi && oi.style.display !== 'none' && oi.value.trim()) {
         data[qid + '_other'] = oi.value.trim();
       }
+    } else if (scaleState[qid] !== undefined) {
+      data[qid] = scaleState[qid];
     } else {
       const hiddenEl = document.getElementById(qid + '-val');
       if (hiddenEl) data[qid] = hiddenEl.value;
