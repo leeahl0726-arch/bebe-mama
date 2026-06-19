@@ -473,18 +473,6 @@
 
 
 
-<div class="card" id="card-name">
-  <div class="q-label">이름<span class="req">*</span></div>
-  <input type="text" id="name-val" placeholder="홍길동" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;font-family:inherit;background:var(--primary-pale);color:var(--text);outline:none;transition:border-color 0.2s;" oninput="clearErr('name');updateProgress()">
-  <div class="err-msg" id="err-name">이름을 입력해주세요.</div>
-</div>
-
-<div class="card" id="card-phone">
-  <div class="q-label">연락처<span class="req">*</span></div>
-  <input type="tel" id="phone-val" placeholder="010-0000-0000" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;font-family:inherit;background:var(--primary-pale);color:var(--text);outline:none;transition:border-color 0.2s;" oninput="clearErr('phone');updateProgress()">
-  <div class="err-msg" id="err-phone">연락처를 입력해주세요.</div>
-</div>
-
 <div class="card" id="card-q12">
   <div class="q-label">Q12. 현재 다른 영아 전집을 사용 중이신가요?<span class="req">*</span></div>
   <div class="options" id="opts-q12">
@@ -509,6 +497,18 @@
   </div>
   <div class="err-msg" id="err-q12_1">이 항목은 필수입니다.</div>
   <input type="hidden" id="q12_1-val" name="q12_1">
+</div>
+
+<div class="card" id="card-name">
+  <div class="q-label">이름<span class="req">*</span></div>
+  <input type="text" id="name-val" placeholder="홍길동" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;font-family:inherit;background:var(--primary-pale);color:var(--text);outline:none;transition:border-color 0.2s;" oninput="clearErr('name');updateProgress()">
+  <div class="err-msg" id="err-name">이름을 입력해주세요.</div>
+</div>
+
+<div class="card" id="card-phone">
+  <div class="q-label">연락처<span class="req">*</span></div>
+  <input type="tel" id="phone-val" placeholder="010-0000-0000" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;font-family:inherit;background:var(--primary-pale);color:var(--text);outline:none;transition:border-color 0.2s;" oninput="clearErr('phone');updateProgress()">
+  <div class="err-msg" id="err-phone">연락처를 입력해주세요.</div>
 </div>
 
 <div class="card" id="card-privacy">
