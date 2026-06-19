@@ -229,6 +229,30 @@
   }
   .err-msg.show { display: block; }
   .submit-area { text-align: center; margin-top: 28px; }
+  .scale-wrap { display: flex; flex-direction: column; gap: 10px; }
+  .scale-row { display: flex; gap: 6px; justify-content: space-between; }
+  .scale-btn {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--primary-pale);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .scale-btn:hover { border-color: var(--primary-light); }
+  .scale-btn.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--gray);
+    padding: 0 2px;
+  }
   .submit-btn {
     background: linear-gradient(135deg, var(--primary), #85C1E9);
     color: #fff;
@@ -867,4 +891,5 @@ updateProgress();
 </script>
 </body>
 </html>
+
 
