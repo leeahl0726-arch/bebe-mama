@@ -486,13 +486,14 @@
 <div class="card hidden" id="card-q12_1">
   <div class="q-label">Q12-1. 사용 중인 전집에 대한 만족도는 어떠신가요?<span class="req">*</span></div>
   <div class="scale-wrap">
-    <div class="scale-row" id="scale-q12_1" style="gap:10px;">
-      <button class="scale-btn" data-val="1" onclick="selectScale(1,'q12_1')" style="flex:1;height:52px;font-size:14px;">1<br><span style="font-size:10px;font-weight:400;">매우<br>불만족</span></button>
-      <button class="scale-btn" data-val="2" onclick="selectScale(2,'q12_1')" style="flex:1;height:52px;font-size:14px;">2</button>
-      <button class="scale-btn" data-val="3" onclick="selectScale(3,'q12_1')" style="flex:1;height:52px;font-size:14px;">3<br><span style="font-size:10px;font-weight:400;">보통</span></button>
-      <button class="scale-btn" data-val="4" onclick="selectScale(4,'q12_1')" style="flex:1;height:52px;font-size:14px;">4</button>
-      <button class="scale-btn" data-val="5" onclick="selectScale(5,'q12_1')" style="flex:1;height:52px;font-size:14px;">5<br><span style="font-size:10px;font-weight:400;">매우<br>만족</span></button>
+    <div class="scale-row" id="scale-q12_1">
+      <button class="scale-btn" data-val="1" onclick="selectScale(1,'q12_1')">1</button>
+      <button class="scale-btn" data-val="2" onclick="selectScale(2,'q12_1')">2</button>
+      <button class="scale-btn" data-val="3" onclick="selectScale(3,'q12_1')">3</button>
+      <button class="scale-btn" data-val="4" onclick="selectScale(4,'q12_1')">4</button>
+      <button class="scale-btn" data-val="5" onclick="selectScale(5,'q12_1')">5</button>
     </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray);padding:4px 2px 0;"><span>매우 불만족</span><span>보통</span><span>매우 만족</span></div>
   </div>
   <div class="err-msg" id="err-q12_1">이 항목은 필수입니다.</div>
   <input type="hidden" id="q12_1-val" name="q12_1">
@@ -866,5 +867,4 @@ updateProgress();
 </script>
 </body>
 </html>
-
 
